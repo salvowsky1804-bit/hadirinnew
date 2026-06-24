@@ -9,12 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WoRouteImport } from './routes/wo'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as WoIndexRouteImport } from './routes/wo.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as USlugRouteImport } from './routes/u.$slug'
+import { Route as AdminTemplatesRouteImport } from './routes/admin.templates'
+import { Route as AdminTeamRouteImport } from './routes/admin.team'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as WoProjectsProjectIdRouteImport } from './routes/wo.projects.$projectId'
+import { Route as WoProjectsProjectIdRsvpRouteImport } from './routes/wo.projects.$projectId.rsvp'
 
+const WoRoute = WoRouteImport.update({
+  id: '/wo',
+  path: '/wo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -22,40 +42,160 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WoIndexRoute = WoIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => WoRoute,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const USlugRoute = USlugRouteImport.update({
+  id: '/u/$slug',
+  path: '/u/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminTemplatesRoute = AdminTemplatesRouteImport.update({
+  id: '/templates',
+  path: '/templates',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTeamRoute = AdminTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const WoProjectsProjectIdRoute = WoProjectsProjectIdRouteImport.update({
+  id: '/projects/$projectId',
+  path: '/projects/$projectId',
+  getParentRoute: () => WoRoute,
+} as any)
+const WoProjectsProjectIdRsvpRoute = WoProjectsProjectIdRsvpRouteImport.update({
+  id: '/rsvp',
+  path: '/rsvp',
+  getParentRoute: () => WoProjectsProjectIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/login': typeof LoginRoute
+  '/wo': typeof WoRouteWithChildren
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/team': typeof AdminTeamRoute
+  '/admin/templates': typeof AdminTemplatesRoute
+  '/u/$slug': typeof USlugRoute
+  '/admin/': typeof AdminIndexRoute
+  '/wo/': typeof WoIndexRoute
+  '/wo/projects/$projectId': typeof WoProjectsProjectIdRouteWithChildren
+  '/wo/projects/$projectId/rsvp': typeof WoProjectsProjectIdRsvpRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/team': typeof AdminTeamRoute
+  '/admin/templates': typeof AdminTemplatesRoute
+  '/u/$slug': typeof USlugRoute
+  '/admin': typeof AdminIndexRoute
+  '/wo': typeof WoIndexRoute
+  '/wo/projects/$projectId': typeof WoProjectsProjectIdRouteWithChildren
+  '/wo/projects/$projectId/rsvp': typeof WoProjectsProjectIdRsvpRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/login': typeof LoginRoute
+  '/wo': typeof WoRouteWithChildren
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/team': typeof AdminTeamRoute
+  '/admin/templates': typeof AdminTemplatesRoute
+  '/u/$slug': typeof USlugRoute
+  '/admin/': typeof AdminIndexRoute
+  '/wo/': typeof WoIndexRoute
+  '/wo/projects/$projectId': typeof WoProjectsProjectIdRouteWithChildren
+  '/wo/projects/$projectId/rsvp': typeof WoProjectsProjectIdRsvpRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/login'
+    | '/wo'
+    | '/admin/settings'
+    | '/admin/team'
+    | '/admin/templates'
+    | '/u/$slug'
+    | '/admin/'
+    | '/wo/'
+    | '/wo/projects/$projectId'
+    | '/wo/projects/$projectId/rsvp'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login'
-  id: '__root__' | '/' | '/login'
+  to:
+    | '/'
+    | '/login'
+    | '/admin/settings'
+    | '/admin/team'
+    | '/admin/templates'
+    | '/u/$slug'
+    | '/admin'
+    | '/wo'
+    | '/wo/projects/$projectId'
+    | '/wo/projects/$projectId/rsvp'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/login'
+    | '/wo'
+    | '/admin/settings'
+    | '/admin/team'
+    | '/admin/templates'
+    | '/u/$slug'
+    | '/admin/'
+    | '/wo/'
+    | '/wo/projects/$projectId'
+    | '/wo/projects/$projectId/rsvp'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   LoginRoute: typeof LoginRoute
+  WoRoute: typeof WoRouteWithChildren
+  USlugRoute: typeof USlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/wo': {
+      id: '/wo'
+      path: '/wo'
+      fullPath: '/wo'
+      preLoaderRoute: typeof WoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -65,12 +205,110 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/wo/': {
+      id: '/wo/'
+      path: '/'
+      fullPath: '/wo/'
+      preLoaderRoute: typeof WoIndexRouteImport
+      parentRoute: typeof WoRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/u/$slug': {
+      id: '/u/$slug'
+      path: '/u/$slug'
+      fullPath: '/u/$slug'
+      preLoaderRoute: typeof USlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/templates': {
+      id: '/admin/templates'
+      path: '/templates'
+      fullPath: '/admin/templates'
+      preLoaderRoute: typeof AdminTemplatesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/team': {
+      id: '/admin/team'
+      path: '/team'
+      fullPath: '/admin/team'
+      preLoaderRoute: typeof AdminTeamRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/wo/projects/$projectId': {
+      id: '/wo/projects/$projectId'
+      path: '/projects/$projectId'
+      fullPath: '/wo/projects/$projectId'
+      preLoaderRoute: typeof WoProjectsProjectIdRouteImport
+      parentRoute: typeof WoRoute
+    }
+    '/wo/projects/$projectId/rsvp': {
+      id: '/wo/projects/$projectId/rsvp'
+      path: '/rsvp'
+      fullPath: '/wo/projects/$projectId/rsvp'
+      preLoaderRoute: typeof WoProjectsProjectIdRsvpRouteImport
+      parentRoute: typeof WoProjectsProjectIdRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminTeamRoute: typeof AdminTeamRoute
+  AdminTemplatesRoute: typeof AdminTemplatesRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminTeamRoute: AdminTeamRoute,
+  AdminTemplatesRoute: AdminTemplatesRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface WoProjectsProjectIdRouteChildren {
+  WoProjectsProjectIdRsvpRoute: typeof WoProjectsProjectIdRsvpRoute
+}
+
+const WoProjectsProjectIdRouteChildren: WoProjectsProjectIdRouteChildren = {
+  WoProjectsProjectIdRsvpRoute: WoProjectsProjectIdRsvpRoute,
+}
+
+const WoProjectsProjectIdRouteWithChildren =
+  WoProjectsProjectIdRoute._addFileChildren(WoProjectsProjectIdRouteChildren)
+
+interface WoRouteChildren {
+  WoIndexRoute: typeof WoIndexRoute
+  WoProjectsProjectIdRoute: typeof WoProjectsProjectIdRouteWithChildren
+}
+
+const WoRouteChildren: WoRouteChildren = {
+  WoIndexRoute: WoIndexRoute,
+  WoProjectsProjectIdRoute: WoProjectsProjectIdRouteWithChildren,
+}
+
+const WoRouteWithChildren = WoRoute._addFileChildren(WoRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   LoginRoute: LoginRoute,
+  WoRoute: WoRouteWithChildren,
+  USlugRoute: USlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
