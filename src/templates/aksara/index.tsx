@@ -1,0 +1,14 @@
+import type { TemplateRenderProps } from "@/types/template";
+
+// Stub — desain penuh dibangun di tahap 4.
+export default function AksaraTemplate({ data, guestName }: TemplateRenderProps) {
+  return (
+    <div className="min-h-screen bg-[#F7F3EC] p-8 text-[#2B2622]">
+      <p className="text-sm uppercase tracking-widest">Template: Aksara (stub)</p>
+      <h1 className="mt-4 font-serif text-4xl">
+        {data.groom.nickName} &amp; {data.bride.nickName}
+      </h1>
+      {guestName && <p className="mt-2 text-[#6E655C]">Kepada Yth. {guestName}</p>}
+    </div>
+  );
+}
