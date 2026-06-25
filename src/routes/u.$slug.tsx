@@ -1,7 +1,7 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense, useMemo } from "react";
-import { dummyProjects } from "@/data/dummy";
 import { getTemplate } from "@/lib/template-registry";
+import { useProjects } from "@/lib/projects-store";
 
 export const Route = createFileRoute("/u/$slug")({
   head: ({ params }) => ({
@@ -14,23 +14,49 @@ export const Route = createFileRoute("/u/$slug")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  loader: ({ params }) => {
-    const project = dummyProjects.find((p) => p.slug === params.slug);
-    if (!project) throw notFound();
-    return { project };
-  },
   component: GuestInvitationPage,
 });
 
 function GuestInvitationPage() {
-  const { project } = Route.useLoaderData();
+  const { slug } = Route.useParams();
+  const { getProjectBySlug } = useProjects();
+  const project = getProjectBySlug(slug);
   const search =
     typeof window === "undefined" ? "" : window.location.search;
   const guestName = new URLSearchParams(search).get("tamu") ?? undefined;
 
-  const entry = useMemo(() => getTemplate(project.templateSlug), [project.templateSlug]);
+  const entry = useMemo(
+    () => (project ? getTemplate(project.templateSlug) : undefined),
+    [project],
+  );
 
-  if (!entry) {
+  // Per-template code split: only ship the chosen template's chunk.
+  // Hook order must be stable — declare before any early return.
+  const TemplateComponent = useMemo(
+    () => (entry ? lazy(entry.load) : null),
+    [entry],
+  );
+
+  if (!project) {
+    return (
+      <main className="grid min-h-dvh place-items-center bg-[#F7F3EC] px-4 text-center text-[#2B2622]">
+        <div className="max-w-sm">
+          <h1 className="font-serif text-2xl">Undangan tidak ditemukan</h1>
+          <p className="mt-2 text-sm text-[#6E655C]">
+            Slug <code>{slug}</code> belum terdaftar.
+          </p>
+          <Link
+            to="/"
+            className="mt-4 inline-block rounded-md border border-[#2B2622] px-4 py-2 text-sm"
+          >
+            Kembali ke beranda
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  if (!entry || !TemplateComponent) {
     return (
       <main className="grid min-h-dvh place-items-center bg-[#F7F3EC] px-4 text-center text-[#2B2622]">
         <div>
@@ -42,12 +68,6 @@ function GuestInvitationPage() {
       </main>
     );
   }
-
-  // Per-template code split: only ship the chosen template's chunk.
-  const TemplateComponent = useMemo(
-    () => lazy(entry.load),
-    [entry],
-  );
 
   return (
     <Suspense fallback={<TemplateFallback />}>

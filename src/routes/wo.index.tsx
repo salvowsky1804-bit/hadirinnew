@@ -1,21 +1,32 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { dummyProjects } from "@/data/dummy";
+import { useProjects } from "@/lib/projects-store";
 
 export const Route = createFileRoute("/wo/")({
   component: WoProjectsList,
 });
 
 function WoProjectsList() {
+  const { projects } = useProjects();
   return (
     <section aria-labelledby="projects-heading" className="space-y-4">
-      <h2 id="projects-heading" className="sr-only">
-        Daftar proyek undangan
-      </h2>
-      <p className="text-sm text-muted-foreground">
-        Tahap 1 — pratinjau daftar proyek (dummy). Editor lengkap dibangun di tahap 3.
-      </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 id="projects-heading" className="font-serif text-xl">
+            Daftar Proyek Undangan
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {projects.length} proyek aktif. Klik untuk membuka editor.
+          </p>
+        </div>
+        <Link
+          to="/wo/new"
+          className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background hover:opacity-90"
+        >
+          + Proyek Baru
+        </Link>
+      </div>
       <ul className="grid gap-3 sm:grid-cols-2">
-        {dummyProjects.map((p) => (
+        {projects.map((p) => (
           <li
             key={p.id}
             className="rounded-lg border border-border bg-card p-4"
@@ -35,6 +46,9 @@ function WoProjectsList() {
             <p className="mt-1 text-xs text-muted-foreground">
               Template: {p.templateSlug} · Tanggal acara: {p.eventDate}
             </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {p.guests.length} tamu · {p.rsvps.length} RSVP · {p.wishes.length} ucapan
+            </p>
             <div className="mt-3 flex gap-2 text-xs">
               <Link
                 to="/wo/projects/$projectId"
@@ -53,6 +67,11 @@ function WoProjectsList() {
             </div>
           </li>
         ))}
+        {projects.length === 0 ? (
+          <li className="col-span-full rounded-lg border border-dashed border-border bg-muted/30 p-8 text-center text-sm text-muted-foreground">
+            Belum ada proyek. Klik &ldquo;Proyek Baru&rdquo; untuk memulai.
+          </li>
+        ) : null}
       </ul>
     </section>
   );

@@ -15,6 +15,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WoIndexRouteImport } from './routes/wo.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as WoNewRouteImport } from './routes/wo.new'
 import { Route as USlugRouteImport } from './routes/u.$slug'
 import { Route as AdminTemplatesRouteImport } from './routes/admin.templates'
 import { Route as AdminTeamRouteImport } from './routes/admin.team'
@@ -51,6 +52,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const WoNewRoute = WoNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => WoRoute,
 } as any)
 const USlugRoute = USlugRouteImport.update({
   id: '/u/$slug',
@@ -92,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/admin/team': typeof AdminTeamRoute
   '/admin/templates': typeof AdminTemplatesRoute
   '/u/$slug': typeof USlugRoute
+  '/wo/new': typeof WoNewRoute
   '/admin/': typeof AdminIndexRoute
   '/wo/': typeof WoIndexRoute
   '/wo/projects/$projectId': typeof WoProjectsProjectIdRouteWithChildren
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/admin/team': typeof AdminTeamRoute
   '/admin/templates': typeof AdminTemplatesRoute
   '/u/$slug': typeof USlugRoute
+  '/wo/new': typeof WoNewRoute
   '/admin': typeof AdminIndexRoute
   '/wo': typeof WoIndexRoute
   '/wo/projects/$projectId': typeof WoProjectsProjectIdRouteWithChildren
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/admin/team': typeof AdminTeamRoute
   '/admin/templates': typeof AdminTemplatesRoute
   '/u/$slug': typeof USlugRoute
+  '/wo/new': typeof WoNewRoute
   '/admin/': typeof AdminIndexRoute
   '/wo/': typeof WoIndexRoute
   '/wo/projects/$projectId': typeof WoProjectsProjectIdRouteWithChildren
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/admin/team'
     | '/admin/templates'
     | '/u/$slug'
+    | '/wo/new'
     | '/admin/'
     | '/wo/'
     | '/wo/projects/$projectId'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/admin/team'
     | '/admin/templates'
     | '/u/$slug'
+    | '/wo/new'
     | '/admin'
     | '/wo'
     | '/wo/projects/$projectId'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/admin/team'
     | '/admin/templates'
     | '/u/$slug'
+    | '/wo/new'
     | '/admin/'
     | '/wo/'
     | '/wo/projects/$projectId'
@@ -218,6 +230,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/wo/new': {
+      id: '/wo/new'
+      path: '/new'
+      fullPath: '/wo/new'
+      preLoaderRoute: typeof WoNewRouteImport
+      parentRoute: typeof WoRoute
     }
     '/u/$slug': {
       id: '/u/$slug'
@@ -292,11 +311,13 @@ const WoProjectsProjectIdRouteWithChildren =
   WoProjectsProjectIdRoute._addFileChildren(WoProjectsProjectIdRouteChildren)
 
 interface WoRouteChildren {
+  WoNewRoute: typeof WoNewRoute
   WoIndexRoute: typeof WoIndexRoute
   WoProjectsProjectIdRoute: typeof WoProjectsProjectIdRouteWithChildren
 }
 
 const WoRouteChildren: WoRouteChildren = {
+  WoNewRoute: WoNewRoute,
   WoIndexRoute: WoIndexRoute,
   WoProjectsProjectIdRoute: WoProjectsProjectIdRouteWithChildren,
 }
