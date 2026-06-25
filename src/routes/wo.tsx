@@ -13,7 +13,10 @@ function WoLayout() {
     <DashboardShell
       area="WO"
       requiredRole="wo"
-      navItems={[{ to: "/wo", label: "Proyek Undangan", exact: true }]}
+      navItems={[
+        { to: "/wo", label: "Proyek Undangan", exact: true },
+        { to: "/wo/new", label: "+ Proyek Baru" },
+      ]}
     />
   );
 }
