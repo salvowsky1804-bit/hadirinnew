@@ -79,14 +79,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Hadirin" },
+      { name: "description", content: "Hadirin Wedding Invitation Platform" },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Hadirin" },
+      { property: "og:description", content: "Hadirin Wedding Invitation Platform" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Hadirin" },
+      { name: "twitter:description", content: "Hadirin Wedding Invitation Platform" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9c100d76-6a9e-4c31-bdbc-fcf040f3f27f/id-preview-69ec64d9--daee7857-04ce-4a9e-8471-b7a22eafe343.lovable.app-1782363595382.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9c100d76-6a9e-4c31-bdbc-fcf040f3f27f/id-preview-69ec64d9--daee7857-04ce-4a9e-8471-b7a22eafe343.lovable.app-1782363595382.png" },
     ],
     links: [
       {
