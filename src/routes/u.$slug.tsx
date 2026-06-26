@@ -71,7 +71,11 @@ function GuestInvitationPage() {
 
   return (
     <Suspense fallback={<TemplateFallback />}>
-      <TemplateComponent data={project.data} guestName={guestName} />
+      <TemplateComponent
+        data={project.data}
+        guestName={guestName}
+        projectId={project.id}
+      />
     </Suspense>
   );
 }

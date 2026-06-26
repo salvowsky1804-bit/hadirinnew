@@ -45,4 +45,5 @@ import type { InvitationData } from "./invitation";
 export interface TemplateRenderProps {
   data: InvitationData;
   guestName?: string;
+  projectId?: string;
 }
