@@ -31,6 +31,28 @@ function TemplatesCatalog() {
     loadActive(),
   );
   const [dismissedNew, setDismissedNew] = useState(false);
+  const [previewSlug, setPreviewSlug] = useState<string | null>(null);
+  const [previewDevice, setPreviewDevice] = useState<"mobile" | "desktop">(
+    "mobile",
+  );
+
+  useEffect(() => {
+    if (!previewSlug) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setPreviewSlug(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [previewSlug]);
+
+  const previewTemplate = templates.find(
+    (t) => t.manifest.slug === previewSlug,
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -146,19 +168,109 @@ function TemplatesCatalog() {
                   <span className="text-xs text-muted-foreground">
                     {manifest.fields.length} field custom
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => toggle(manifest.slug)}
-                    className="rounded-md border border-border px-3 py-1.5 text-xs uppercase tracking-widest hover:bg-muted"
-                  >
-                    {isActive ? "Nonaktifkan" : "Aktifkan"}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setPreviewSlug(manifest.slug)}
+                      className="rounded-md border border-border bg-foreground px-3 py-1.5 text-xs uppercase tracking-widest text-background hover:opacity-90"
+                    >
+                      Preview
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => toggle(manifest.slug)}
+                      className="rounded-md border border-border px-3 py-1.5 text-xs uppercase tracking-widest hover:bg-muted"
+                    >
+                      {isActive ? "Nonaktifkan" : "Aktifkan"}
+                    </button>
+                  </div>
                 </div>
               </div>
             </article>
           );
         })}
       </div>
+
+      {previewTemplate && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Pratinjau template ${previewTemplate.manifest.name}`}
+          className="fixed inset-0 z-50 flex flex-col bg-black/70 backdrop-blur-sm"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setPreviewSlug(null);
+          }}
+        >
+          <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3 text-white">
+            <div className="min-w-0">
+              <p className="text-[10px] uppercase tracking-widest text-white/60">
+                Pratinjau Template
+              </p>
+              <h2 className="truncate font-serif text-lg">
+                {previewTemplate.manifest.name}
+              </h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="inline-flex overflow-hidden rounded-md border border-white/20 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setPreviewDevice("mobile")}
+                  className={`px-3 py-1.5 uppercase tracking-widest ${
+                    previewDevice === "mobile"
+                      ? "bg-white text-black"
+                      : "text-white/80 hover:bg-white/10"
+                  }`}
+                >
+                  Mobile
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewDevice("desktop")}
+                  className={`px-3 py-1.5 uppercase tracking-widest ${
+                    previewDevice === "desktop"
+                      ? "bg-white text-black"
+                      : "text-white/80 hover:bg-white/10"
+                  }`}
+                >
+                  Desktop
+                </button>
+              </div>
+              <a
+                href={`/preview/${previewTemplate.manifest.slug}`}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-md border border-white/20 px-3 py-1.5 text-xs uppercase tracking-widest text-white hover:bg-white/10"
+              >
+                Tab baru
+              </a>
+              <button
+                type="button"
+                onClick={() => setPreviewSlug(null)}
+                aria-label="Tutup pratinjau"
+                className="rounded-md border border-white/20 px-3 py-1.5 text-xs uppercase tracking-widest text-white hover:bg-white/10"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-1 items-center justify-center overflow-auto p-4">
+            <div
+              className={`overflow-hidden rounded-lg bg-white shadow-2xl transition-all ${
+                previewDevice === "mobile"
+                  ? "h-[min(85vh,820px)] w-[390px] max-w-full"
+                  : "h-[min(90vh,900px)] w-full max-w-6xl"
+              }`}
+            >
+              <iframe
+                key={previewTemplate.manifest.slug + previewDevice}
+                title={`Pratinjau ${previewTemplate.manifest.name}`}
+                src={`/preview/${previewTemplate.manifest.slug}`}
+                className="h-full w-full border-0"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
