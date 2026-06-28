@@ -79,6 +79,10 @@
   --sage: oklch(0.66 0.04 140);
   --charcoal: oklch(0.24 0.012 60);
   --stone: oklch(0.52 0.012 60);
+  --onyx: oklch(0.18 0.008 60);
+  --onyx-soft: oklch(0.26 0.01 60);
+  --gold: oklch(0.78 0.10 80);
+  --line: oklch(0.55 0.018 65);
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
@@ -157,4 +161,64 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
+}
+
+/* ====== Elegant Onyx template utilities ====== */
+@layer utilities {
+  .elegant-shimmer-gold {
+    background: linear-gradient(100deg, var(--cream) 0%, var(--cream) 35%, var(--gold) 50%, var(--cream) 65%, var(--cream) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: elegantShimmer 5s ease-in-out infinite;
+  }
+  @keyframes elegantShimmer {
+    0% { background-position: 200% 50%; }
+    100% { background-position: -100% 50%; }
+  }
+  .elegant-float {
+    animation: elegantFloat 9s ease-in-out infinite;
+    will-change: transform;
+  }
+  @keyframes elegantFloat {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(0, -8px, 0); }
+  }
+  .elegant-glow {
+    animation: elegantGlow 3.6s ease-in-out infinite;
+  }
+  @keyframes elegantGlow {
+    0%, 100% { box-shadow: 0 0 18px 0 oklch(0.85 0.09 80 / 0.18); }
+    50% { box-shadow: 0 0 36px 4px oklch(0.85 0.09 80 / 0.45); }
+  }
+  .elegant-ken-burns {
+    animation: elegantKenBurns 18s ease-in-out infinite alternate;
+  }
+  @keyframes elegantKenBurns {
+    from { transform: scale(1.05); }
+    to { transform: scale(1.18); }
+  }
+  .elegant-fade-up { animation: elegantFadeUp 1.2s ease-out both; }
+  @keyframes elegantFadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .elegant-particle {
+    position: absolute;
+    border-radius: 9999px;
+    background: radial-gradient(circle, oklch(0.92 0.08 80 / 0.95), oklch(0.85 0.09 80 / 0));
+    will-change: transform, opacity;
+    animation-name: elegantParticleDrift;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+  @keyframes elegantParticleDrift {
+    0% { transform: translate3d(0, 0, 0) scale(0.6); opacity: 0; }
+    10% { opacity: 0.9; }
+    50% { transform: translate3d(20px, -55vh, 0) scale(1); opacity: 0.7; }
+    100% { transform: translate3d(-10px, -110vh, 0) scale(0.4); opacity: 0; }
+  }
+  .elegant-track-3 { letter-spacing: 0.45em; }
+  .elegant-track-2 { letter-spacing: 0.32em; }
 }
