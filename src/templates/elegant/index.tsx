@@ -7,6 +7,7 @@ import { RsvpForm } from "../_shared/RsvpForm";
 import { WishesWall } from "../_shared/WishesWall";
 import { formatDateID } from "../_shared/utils";
 import { AmbientParticles } from "./AmbientParticles";
+import { SectionShell } from "./SectionShell";
 
 const FALLBACK_HERO =
   "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1600&q=70&auto=format&fit=crop";
@@ -63,23 +64,35 @@ export default function ElegantTemplate({ data, guestName, projectId }: Template
       )}
 
       {/* ============ OPENING ============ */}
-      <section className="relative overflow-hidden px-6 py-24 text-center">
-        <div className="pointer-events-none absolute inset-0 opacity-30 [background:radial-gradient(circle_at_50%_30%,oklch(0.78_0.10_80/0.35),transparent_65%)]" />
-        <Reveal>
+      <SectionShell
+        bgImage={heroImg}
+        particles={6}
+        ornaments
+        className="min-h-[90vh] flex items-center justify-center text-center"
+      >
+        <Reveal className="mx-auto max-w-xl">
           <p className="font-sans text-[10px] uppercase elegant-track-3 text-[var(--gold)]">
             Assalamu&apos;alaikum Wr. Wb.
           </p>
+          <h2
+            className="mt-6 font-serif text-4xl italic md:text-5xl elegant-shimmer-gold"
+            style={{ fontFamily: '"Playfair Display", serif' }}
+          >
+            {data.groom.nickName} &amp; {data.bride.nickName}
+          </h2>
           <p className="mx-auto mt-8 max-w-md font-serif text-base leading-relaxed text-[var(--cream)]/85 md:text-lg">
             {data.settings.greeting ??
               "Dengan memohon rahmat dan ridho Tuhan Yang Maha Esa, kami bermaksud menyelenggarakan acara pernikahan putra-putri kami."}
           </p>
-          <div className="mx-auto mt-10 h-12 w-px bg-gradient-to-b from-transparent via-[var(--gold)] to-transparent" />
+          <div className="mt-10 flex justify-center">
+            <span className="elegant-scroll-line" aria-hidden />
+          </div>
         </Reveal>
-      </section>
+      </SectionShell>
 
       {/* ============ QUOTE ============ */}
       {quote && (
-        <section className="relative px-6 py-20">
+        <SectionShell bgImage={heroImg} particles={4} className="py-20">
           <Reveal className="mx-auto max-w-xl text-center">
             <p
               className="font-serif text-2xl italic leading-relaxed text-[var(--cream)] md:text-3xl"
@@ -93,7 +106,7 @@ export default function ElegantTemplate({ data, guestName, projectId }: Template
               </p>
             )}
           </Reveal>
-        </section>
+        </SectionShell>
       )}
 
       {/* ============ COUPLE ============ */}
@@ -122,7 +135,7 @@ export default function ElegantTemplate({ data, guestName, projectId }: Template
 
       {/* ============ COUNTDOWN ============ */}
       {firstEvent && (
-        <section className="relative px-6 py-24 text-center">
+        <SectionShell bgImage={heroImg} sideLabel="MOMENT" particles={4} className="text-center">
           <Reveal>
             <p className="font-sans text-[10px] uppercase elegant-track-3 text-[var(--gold)]">
               Counting Down
@@ -138,11 +151,11 @@ export default function ElegantTemplate({ data, guestName, projectId }: Template
               <Countdown targetIso={targetIso} theme="dark" />
             </div>
           </Reveal>
-        </section>
+        </SectionShell>
       )}
 
       {/* ============ EVENTS ============ */}
-      <section className="px-6 py-24">
+      <SectionShell bgImage={heroImg} sideLabel="EVENT" ornaments particles={4}>
         <Reveal className="text-center">
           <p className="font-sans text-[10px] uppercase elegant-track-3 text-[var(--gold)]">
             Save the Date
@@ -153,6 +166,9 @@ export default function ElegantTemplate({ data, guestName, projectId }: Template
           >
             Rangkaian Acara
           </h2>
+          <div className="elegant-divider-floral mt-6 text-[var(--gold)]">
+            <span className="block h-1.5 w-1.5 rotate-45 bg-[var(--gold)]" />
+          </div>
         </Reveal>
         <div className="mx-auto mt-12 grid max-w-3xl gap-6 md:grid-cols-2">
           {data.events.map((ev) => (
@@ -188,7 +204,7 @@ export default function ElegantTemplate({ data, guestName, projectId }: Template
             </Reveal>
           ))}
         </div>
-      </section>
+      </SectionShell>
 
       {/* ============ STORY ============ */}
       {data.loveStory.length > 0 && (
@@ -258,7 +274,7 @@ export default function ElegantTemplate({ data, guestName, projectId }: Template
 
       {/* ============ GIFTS ============ */}
       {data.gifts.length > 0 && (
-        <section className="px-6 py-24">
+        <SectionShell bgImage={heroImg} sideLabel="LOVE" particles={3}>
           <Reveal className="mx-auto max-w-xl text-center">
             <p className="font-sans text-[10px] uppercase elegant-track-3 text-[var(--gold)]">
               Wedding Gift
@@ -290,11 +306,11 @@ export default function ElegantTemplate({ data, guestName, projectId }: Template
               </Reveal>
             ))}
           </div>
-        </section>
+        </SectionShell>
       )}
 
       {/* ============ RSVP & WISHES ============ */}
-      <section className="px-6 py-24">
+      <SectionShell bgImage={heroImg} sideLabel="RSVP" ornaments particles={5}>
         <div className="mx-auto grid max-w-5xl gap-12 md:grid-cols-2">
           <Reveal>
             <p className="font-sans text-[10px] uppercase elegant-track-3 text-[var(--gold)]">
@@ -325,7 +341,7 @@ export default function ElegantTemplate({ data, guestName, projectId }: Template
             </div>
           </Reveal>
         </div>
-      </section>
+      </SectionShell>
 
       {/* ============ FOOTER ============ */}
       <footer className="relative overflow-hidden px-6 pb-16 pt-24 text-center">
