@@ -79,6 +79,10 @@
   --sage: oklch(0.66 0.04 140);
   --charcoal: oklch(0.24 0.012 60);
   --stone: oklch(0.52 0.012 60);
+  --onyx: oklch(0.18 0.008 60);
+  --onyx-soft: oklch(0.26 0.01 60);
+  --gold: oklch(0.78 0.10 80);
+  --line: oklch(0.55 0.018 65);
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
