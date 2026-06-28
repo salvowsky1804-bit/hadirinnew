@@ -221,4 +221,50 @@
   }
   .elegant-track-3 { letter-spacing: 0.45em; }
   .elegant-track-2 { letter-spacing: 0.32em; }
+  .elegant-scroll-line {
+    position: relative;
+    display: inline-block;
+    width: 1px;
+    height: 56px;
+    background: linear-gradient(to bottom, transparent, var(--cream) 40%, transparent);
+    overflow: hidden;
+  }
+  .elegant-scroll-line::after {
+    content: "";
+    position: absolute;
+    top: -40%;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    background: linear-gradient(to bottom, transparent, var(--gold));
+    animation: elegantScroll 2.2s ease-in-out infinite;
+  }
+  @keyframes elegantScroll {
+    0% { top: -40%; opacity: 0; }
+    30% { opacity: 1; }
+    100% { top: 110%; opacity: 0; }
+  }
+  .elegant-corner {
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    pointer-events: none;
+    opacity: 0.55;
+    color: var(--gold);
+  }
+  .elegant-corner svg { width: 100%; height: 100%; }
+  .elegant-divider-floral {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    color: var(--gold);
+  }
+  .elegant-divider-floral::before,
+  .elegant-divider-floral::after {
+    content: "";
+    height: 1px;
+    width: 56px;
+    background: linear-gradient(to right, transparent, currentColor, transparent);
+  }
 }
