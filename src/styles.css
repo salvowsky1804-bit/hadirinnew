@@ -161,6 +161,41 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
+
+  /* Cursor affordances — interactive elements always show pointer,
+     disabled shows not-allowed, text inputs show text caret. */
+  button,
+  a,
+  [role="button"],
+  [role="link"],
+  [role="tab"],
+  [role="menuitem"],
+  [role="option"],
+  [role="switch"],
+  [role="checkbox"],
+  [role="radio"],
+  summary,
+  label[for],
+  select,
+  [data-slot="trigger"],
+  [data-state][data-slot] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled="true"],
+  [data-disabled],
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    cursor: not-allowed;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="file"]):not([type="range"]):not([type="color"]),
+  textarea,
+  [contenteditable="true"] {
+    cursor: text;
+  }
 }
 
 /* ====== Elegant Onyx template utilities ====== */
