@@ -20,23 +20,29 @@ interface Props {
 // Shared shell for the Admin and WO dashboards. Sidebar on md+, top bar on mobile.
 // Neutral, functional palette — this is a long-session work tool.
 export function DashboardShell({ area, navItems, requiredRole }: Props) {
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading } = useAuth();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  // Fake guard — redirect unauthenticated users to /login.
+  // Guard — wait until Supabase session is hydrated, then enforce role.
   useEffect(() => {
-    if (user === null) {
-      // Wait one tick in case auth is still hydrating from localStorage.
-      const t = setTimeout(() => {
-        if (!user) navigate({ to: "/login" });
-      }, 50);
-      return () => clearTimeout(t);
+    if (loading) return;
+    if (!user) {
+      navigate({ to: "/login" });
+      return;
     }
-    if (user && user.role !== requiredRole) {
+    if (user.role !== requiredRole) {
       navigate({ to: user.role === "admin" ? "/admin" : "/wo" });
     }
-  }, [user, requiredRole, navigate]);
+  }, [user, loading, requiredRole, navigate]);
+
+  if (loading || !user) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center bg-background text-sm text-muted-foreground">
+        Memuat sesi…
+      </div>
+    );
+  }
 
   const isActive = (to: string, exact?: boolean) =>
     exact ? pathname === to : pathname === to || pathname.startsWith(to + "/");
@@ -79,12 +85,12 @@ export function DashboardShell({ area, navItems, requiredRole }: Props) {
           <div className="border-t border-border p-4 text-xs">
             <p className="font-medium">{user?.name}</p>
             <p className="truncate text-muted-foreground">{user?.email}</p>
-            <button
-              type="button"
-              onClick={() => {
-                signOut();
-                navigate({ to: "/login" });
-              }}
+              <button
+                type="button"
+                onClick={async () => {
+                  await signOut();
+                  navigate({ to: "/login" });
+                }}
               className="mt-2 text-muted-foreground underline hover:text-foreground"
             >
               Keluar

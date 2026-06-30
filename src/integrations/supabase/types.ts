@@ -14,16 +14,332 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      guests: {
+        Row: {
+          created_at: string
+          group_label: string | null
+          id: string
+          invite_code: string | null
+          name: string
+          notes: string | null
+          plus_ones: number
+          project_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          group_label?: string | null
+          id?: string
+          invite_code?: string | null
+          name: string
+          notes?: string | null
+          plus_ones?: number
+          project_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          group_label?: string | null
+          id?: string
+          invite_code?: string | null
+          name?: string
+          notes?: string | null
+          plus_ones?: number
+          project_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          active: boolean
+          avatar_url: string | null
+          created_at: string
+          full_name: string
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          bride_name: string
+          cover_url: string | null
+          created_at: string
+          data: Json
+          event_date: string | null
+          groom_name: string
+          id: string
+          music_url: string | null
+          owner_id: string
+          slug: string
+          status: Database["public"]["Enums"]["project_status"]
+          template_slug: string
+          updated_at: string
+        }
+        Insert: {
+          bride_name?: string
+          cover_url?: string | null
+          created_at?: string
+          data?: Json
+          event_date?: string | null
+          groom_name?: string
+          id?: string
+          music_url?: string | null
+          owner_id: string
+          slug: string
+          status?: Database["public"]["Enums"]["project_status"]
+          template_slug: string
+          updated_at?: string
+        }
+        Update: {
+          bride_name?: string
+          cover_url?: string | null
+          created_at?: string
+          data?: Json
+          event_date?: string | null
+          groom_name?: string
+          id?: string
+          music_url?: string | null
+          owner_id?: string
+          slug?: string
+          status?: Database["public"]["Enums"]["project_status"]
+          template_slug?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_template_slug_fkey"
+            columns: ["template_slug"]
+            isOneToOne: false
+            referencedRelation: "templates"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      rsvps: {
+        Row: {
+          attendance: Database["public"]["Enums"]["rsvp_attendance"]
+          created_at: string
+          guest_id: string | null
+          head_count: number
+          id: string
+          message: string | null
+          name: string
+          project_id: string
+        }
+        Insert: {
+          attendance: Database["public"]["Enums"]["rsvp_attendance"]
+          created_at?: string
+          guest_id?: string | null
+          head_count?: number
+          id?: string
+          message?: string | null
+          name: string
+          project_id: string
+        }
+        Update: {
+          attendance?: Database["public"]["Enums"]["rsvp_attendance"]
+          created_at?: string
+          guest_id?: string | null
+          head_count?: number
+          id?: string
+          message?: string | null
+          name?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rsvps_guest_id_fkey"
+            columns: ["guest_id"]
+            isOneToOne: false
+            referencedRelation: "guests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rsvps_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      studio_settings: {
+        Row: {
+          contact_email: string | null
+          contact_phone: string | null
+          default_template: string | null
+          features: Json
+          id: number
+          studio_name: string
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          default_template?: string | null
+          features?: Json
+          id?: number
+          studio_name?: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          default_template?: string | null
+          features?: Json
+          id?: number
+          studio_name?: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "studio_settings_default_template_fkey"
+            columns: ["default_template"]
+            isOneToOne: false
+            referencedRelation: "templates"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      templates: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          manifest: Json
+          name: string
+          slug: string
+          thumbnail_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          manifest?: Json
+          name: string
+          slug: string
+          thumbnail_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          manifest?: Json
+          name?: string
+          slug?: string
+          thumbnail_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wishes: {
+        Row: {
+          approved: boolean
+          created_at: string
+          id: string
+          message: string
+          name: string
+          project_id: string
+        }
+        Insert: {
+          approved?: boolean
+          created_at?: string
+          id?: string
+          message: string
+          name: string
+          project_id: string
+        }
+        Update: {
+          approved?: boolean
+          created_at?: string
+          id?: string
+          message?: string
+          name?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      current_user_is_admin: { Args: never; Returns: boolean }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "wo"
+      project_status: "draft" | "published" | "archived"
+      rsvp_attendance: "hadir" | "tidak_hadir" | "ragu"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +466,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "wo"],
+      project_status: ["draft", "published", "archived"],
+      rsvp_attendance: ["hadir", "tidak_hadir", "ragu"],
+    },
   },
 } as const
