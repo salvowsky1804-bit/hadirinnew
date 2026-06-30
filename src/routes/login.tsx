@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useAuth, type Role } from "@/lib/auth";
-import { useEffect } from "react";
+import { useAuth } from "@/lib/auth";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -9,7 +9,7 @@ export const Route = createFileRoute("/login")({
       {
         name: "description",
         content:
-          "Halaman masuk internal tim studio undangan pernikahan. Pilih peran Admin atau WO untuk pengujian.",
+          "Halaman masuk internal tim studio undangan pernikahan.",
       },
     ],
   }),
@@ -17,17 +17,40 @@ export const Route = createFileRoute("/login")({
 });
 
 function LoginPage() {
-  const { user, signInAs } = useAuth();
+  const { user, signIn, signUp, loading } = useAuth();
   const navigate = useNavigate();
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [err, setErr] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [info, setInfo] = useState<string | null>(null);
 
-  // If somehow already signed in, drop them on their dashboard.
   useEffect(() => {
     if (user) navigate({ to: user.role === "admin" ? "/admin" : "/wo" });
   }, [user, navigate]);
 
-  const enter = (role: Role) => {
-    signInAs(role);
-    navigate({ to: role === "admin" ? "/admin" : "/wo" });
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErr(null);
+    setInfo(null);
+    setBusy(true);
+    const res =
+      mode === "signin"
+        ? await signIn(email, password)
+        : await signUp(email, password, fullName);
+    setBusy(false);
+    if (res.error) {
+      setErr(res.error);
+      return;
+    }
+    if (mode === "signup") {
+      setInfo(
+        "Akun dibuat. Jika konfirmasi email aktif, cek inbox-mu. Lalu masuk dengan email & kata sandi.",
+      );
+      setMode("signin");
+    }
   };
 
   return (
@@ -40,65 +63,99 @@ function LoginPage() {
           ← Kembali ke beranda
         </Link>
         <div className="rounded-2xl border border-[#E6DFD2] bg-white/70 p-8 shadow-sm backdrop-blur">
-          <h1 className="font-serif text-3xl">Masuk ke Studio</h1>
+          <h1 className="font-serif text-3xl">
+            {mode === "signin" ? "Masuk ke Studio" : "Daftar Akun WO"}
+          </h1>
           <p className="mt-2 text-sm text-[#6E655C]">
-            Alat kerja internal tim. Untuk fase pengujian, pilih salah satu jalur
-            di bawah untuk masuk tanpa kata sandi.
+            {mode === "signin"
+              ? "Gunakan email & kata sandi tim."
+              : "Akun baru otomatis berperan WO. Admin diberikan oleh super-admin."}
           </p>
 
-          <form
-            className="mt-6 space-y-3"
-            onSubmit={(e) => e.preventDefault()}
-            aria-label="Form masuk (nonaktif)"
-          >
+          <form onSubmit={submit} className="mt-6 space-y-3">
+            {mode === "signup" && (
+              <label className="block text-sm">
+                <span>Nama lengkap</span>
+                <input
+                  required
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="mt-1 w-full rounded-md border border-[#E6DFD2] bg-white px-3 py-2 text-sm"
+                />
+              </label>
+            )}
             <label className="block text-sm">
-              <span className="text-[#2B2622]">Email</span>
+              <span>Email</span>
               <input
+                required
                 type="email"
-                placeholder="nama@studio.id"
-                disabled
-                className="mt-1 w-full rounded-md border border-[#E6DFD2] bg-white/50 px-3 py-2 text-sm placeholder:text-[#A89F94]"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-1 w-full rounded-md border border-[#E6DFD2] bg-white px-3 py-2 text-sm"
               />
             </label>
             <label className="block text-sm">
-              <span className="text-[#2B2622]">Kata sandi</span>
+              <span>Kata sandi</span>
               <input
+                required
                 type="password"
-                placeholder="••••••••"
-                disabled
-                className="mt-1 w-full rounded-md border border-[#E6DFD2] bg-white/50 px-3 py-2 text-sm placeholder:text-[#A89F94]"
+                minLength={6}
+                autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-1 w-full rounded-md border border-[#E6DFD2] bg-white px-3 py-2 text-sm"
               />
             </label>
+
+            {err && (
+              <p className="rounded-md bg-red-50 px-3 py-2 text-xs text-red-700">
+                {err}
+              </p>
+            )}
+            {info && (
+              <p className="rounded-md bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
+                {info}
+              </p>
+            )}
+
             <button
               type="submit"
-              disabled
-              className="w-full rounded-md bg-[#6E2A36]/40 px-4 py-2 text-sm font-medium text-white"
+              disabled={busy || loading}
+              className="w-full rounded-md bg-[#2B2622] px-4 py-2.5 text-sm font-medium text-[#F7F3EC] transition hover:bg-[#1a1612] disabled:opacity-50"
             >
-              Masuk (segera hadir)
+              {busy
+                ? "Memproses…"
+                : mode === "signin"
+                  ? "Masuk"
+                  : "Daftar"}
             </button>
           </form>
 
-          <div className="my-6 flex items-center gap-3 text-xs uppercase tracking-widest text-[#A89F94]">
-            <span className="h-px flex-1 bg-[#E6DFD2]" />
-            <span>Jalur uji</span>
-            <span className="h-px flex-1 bg-[#E6DFD2]" />
-          </div>
-
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <button
-              type="button"
-              onClick={() => enter("admin")}
-              className="rounded-md border border-[#2B2622] bg-[#2B2622] px-4 py-3 text-sm font-medium text-[#F7F3EC] transition hover:bg-[#1a1612]"
-            >
-              Masuk sebagai Admin
-            </button>
-            <button
-              type="button"
-              onClick={() => enter("wo")}
-              className="rounded-md border border-[#6E2A36] bg-[#6E2A36] px-4 py-3 text-sm font-medium text-white transition hover:bg-[#581f29]"
-            >
-              Masuk sebagai WO
-            </button>
+          <div className="mt-6 text-center text-xs text-[#6E655C]">
+            {mode === "signin" ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setMode("signup");
+                  setErr(null);
+                }}
+                className="underline hover:text-[#2B2622]"
+              >
+                Belum punya akun? Daftar WO baru
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setMode("signin");
+                  setErr(null);
+                }}
+                className="underline hover:text-[#2B2622]"
+              >
+                Sudah punya akun? Masuk
+              </button>
+            )}
           </div>
         </div>
       </div>
