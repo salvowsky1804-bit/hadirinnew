@@ -921,6 +921,80 @@ function Row({ children }: { children: React.ReactNode }) {
   return <div className="grid gap-3 md:grid-cols-2">{children}</div>;
 }
 
+function GuestQrCell({
+  projectId,
+  guestId,
+  qrPath,
+  onChange,
+}: {
+  projectId: string;
+  guestId: string;
+  qrPath?: string;
+  onChange: (path: string) => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!qrPath) {
+      setPreview(null);
+      return;
+    }
+    getSignedUrl("guest-qr", qrPath, 3600).then((u) => {
+      if (!cancelled) setPreview(u);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [qrPath]);
+
+  async function onPick(file: File) {
+    setBusy(true);
+    setErr(null);
+    try {
+      const { path } = await uploadGuestQr(projectId, guestId, file);
+      onChange(path);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Gagal upload");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      {preview ? (
+        <img
+          src={preview}
+          alt="QR"
+          className="h-12 w-12 rounded border border-border object-contain"
+          loading="lazy"
+        />
+      ) : (
+        <div className="grid h-12 w-12 place-items-center rounded border border-dashed border-border text-[10px] text-muted-foreground">
+          QR
+        </div>
+      )}
+      <label className="cursor-pointer rounded border border-border px-2 py-1 text-[11px] hover:bg-muted">
+        {busy ? "…" : qrPath ? "Ganti" : "Unggah"}
+        <input
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) onPick(f);
+            e.target.value = "";
+          }}
+        />
+      </label>
+      {err ? <span className="text-[10px] text-destructive">{err}</span> : null}
+    </div>
+  );
+}
+
 function RepeaterList<T extends { id: string }>({
   items,
   onAdd,
