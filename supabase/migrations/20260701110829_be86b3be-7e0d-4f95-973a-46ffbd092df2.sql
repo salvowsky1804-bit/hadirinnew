@@ -1,0 +1,1 @@
+CREATE POLICY inv_media_public_read ON storage.objects FOR SELECT USING (bucket_id IN ('invitation-media','guest-qr'));

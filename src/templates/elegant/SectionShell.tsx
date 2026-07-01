@@ -24,7 +24,7 @@ export function SectionShell({
 }: SectionShellProps) {
   return (
     <section
-      className={`relative overflow-hidden px-6 py-24 ${className}`}
+      className={`relative w-full overflow-hidden px-5 py-16 sm:px-8 md:py-24 ${className}`}
     >
       {bgImage && (
         <>
@@ -48,7 +48,7 @@ export function SectionShell({
         </>
       )}
       {ornaments && <CornerOrnaments />}
-      <div className="relative z-10">{children}</div>
+      <div className="relative z-10 mx-auto w-full max-w-3xl">{children}</div>
     </section>
   );
 }
