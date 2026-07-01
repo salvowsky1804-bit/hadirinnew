@@ -15,6 +15,7 @@ function AdminLayout() {
       requiredRole="admin"
       navItems={[
         { to: "/admin", label: "Dashboard", exact: true },
+        { to: "/admin/projects", label: "Semua Proyek" },
         { to: "/admin/templates", label: "Katalog Template" },
         { to: "/admin/team", label: "Kelola WO" },
         { to: "/admin/settings", label: "Pengaturan" },
