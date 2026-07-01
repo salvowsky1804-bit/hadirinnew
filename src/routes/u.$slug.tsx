@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense, useMemo } from "react";
 import { getTemplate } from "@/lib/template-registry";
-import { useProjects } from "@/lib/projects-store";
+import { usePublicProject } from "@/lib/public-invitation";
 
 export const Route = createFileRoute("/u/$slug")({
   head: ({ params }) => ({
@@ -19,8 +19,7 @@ export const Route = createFileRoute("/u/$slug")({
 
 function GuestInvitationPage() {
   const { slug } = Route.useParams();
-  const { getProjectBySlug } = useProjects();
-  const project = getProjectBySlug(slug);
+  const { project, loading } = usePublicProject(slug);
   const search =
     typeof window === "undefined" ? "" : window.location.search;
   const guestName = new URLSearchParams(search).get("tamu") ?? undefined;
@@ -36,6 +35,8 @@ function GuestInvitationPage() {
     () => (entry ? lazy(entry.load) : null),
     [entry],
   );
+
+  if (loading) return <TemplateFallback />;
 
   if (!project) {
     return (

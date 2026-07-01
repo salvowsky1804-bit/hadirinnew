@@ -1,4 +1,4 @@
-import { useProjects } from "@/lib/projects-store";
+import { usePublicWishes } from "@/lib/public-invitation";
 
 interface Props {
   projectId?: string;
@@ -6,9 +6,7 @@ interface Props {
 }
 
 export function WishesWall({ projectId, theme }: Props) {
-  const { getProject } = useProjects();
-  const project = projectId ? getProject(projectId) : undefined;
-  const wishes = project?.wishes ?? [];
+  const { wishes } = usePublicWishes(projectId);
   const isDark = theme === "dark";
 
   if (wishes.length === 0) {
@@ -23,7 +21,6 @@ export function WishesWall({ projectId, theme }: Props) {
     <ul className="space-y-3">
       {wishes
         .slice()
-        .reverse()
         .slice(0, 12)
         .map((w) => (
           <li

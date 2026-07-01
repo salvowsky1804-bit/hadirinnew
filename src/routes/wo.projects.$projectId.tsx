@@ -1,7 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useProjects, slugify } from "@/lib/projects-store";
 import { getTemplate } from "@/lib/template-registry";
+import { PhotoUpload } from "@/components/PhotoUpload";
+import { uploadGuestQr, getSignedUrl } from "@/lib/media";
 import type {
   GalleryPhoto,
   GiftAccount,
@@ -9,6 +11,7 @@ import type {
   InvitationEvent,
   LoveStoryMoment,
   Person,
+  Guest,
 } from "@/types/invitation";
 import type { TemplateFieldDef } from "@/types/template";
 
@@ -36,6 +39,7 @@ function ProjectEditor() {
     removeProject,
     addGuest,
     removeGuest,
+    updateGuest,
   } = useProjects();
   const project = getProject(projectId);
   const [tab, setTab] = useState<Tab>("ringkasan");
@@ -162,6 +166,7 @@ function ProjectEditor() {
         )}
         {tab === "pasangan" && (
           <CoupleTab
+            projectId={project.id}
             data={project.data}
             onChange={(d) => updateData(project.id, () => d)}
           />
@@ -180,6 +185,7 @@ function ProjectEditor() {
         )}
         {tab === "galeri" && (
           <GalleryTab
+            projectId={project.id}
             data={project.data}
             onChange={(d) => updateData(project.id, () => d)}
           />
@@ -202,6 +208,7 @@ function ProjectEditor() {
             project={project}
             onAdd={(g) => addGuest(project.id, g)}
             onRemove={(gid) => removeGuest(project.id, gid)}
+            onUpdate={(gid, patch) => updateGuest(project.id, gid, patch)}
           />
         )}
       </div>
@@ -261,9 +268,11 @@ function SummaryTab({
 
 function CoupleTab({
   data,
+  projectId,
   onChange,
 }: {
   data: InvitationData;
+  projectId: string;
   onChange: (d: InvitationData) => void;
 }) {
   const update = (key: "groom" | "bride", patch: Partial<Person>) =>
@@ -276,6 +285,7 @@ function CoupleTab({
             {k === "groom" ? "Mempelai Pria" : "Mempelai Wanita"}
           </legend>
           <PersonField
+            projectId={projectId}
             person={data[k]}
             onChange={(patch) => update(k, patch)}
           />
@@ -287,9 +297,11 @@ function CoupleTab({
 
 function PersonField({
   person,
+  projectId,
   onChange,
 }: {
   person: Person;
+  projectId: string;
   onChange: (p: Partial<Person>) => void;
 }) {
   return (
@@ -331,15 +343,16 @@ function PersonField({
         </label>
       </Row>
       <Row>
-        <label>
-          <span className="lbl">Foto (URL)</span>
-          <input
-            className="input"
+        <div>
+          <PhotoUpload
+            projectId={projectId}
             value={person.photo ?? ""}
-            onChange={(e) => onChange({ photo: e.target.value })}
-            placeholder="https://…"
+            kind="person"
+            aspect="portrait"
+            label="Foto"
+            onChange={(url) => onChange({ photo: url })}
           />
-        </label>
+        </div>
         <label>
           <span className="lbl">Instagram</span>
           <input
@@ -551,9 +564,11 @@ function StoryTab({
 
 function GalleryTab({
   data,
+  projectId,
   onChange,
 }: {
   data: InvitationData;
+  projectId: string;
   onChange: (d: InvitationData) => void;
 }) {
   const set = (gallery: GalleryPhoto[]) => onChange({ ...data, gallery });
@@ -569,19 +584,18 @@ function GalleryTab({
       empty="Galeri kosong."
       renderItem={(ph, idx) => (
         <>
-          <label>
-            <span className="lbl">URL Foto</span>
-            <input
-              className="input"
-              value={ph.url}
-              onChange={(e) => {
-                const arr = [...data.gallery];
-                arr[idx] = { ...ph, url: e.target.value };
-                set(arr);
-              }}
-              placeholder="https://…"
-            />
-          </label>
+          <PhotoUpload
+            projectId={projectId}
+            value={ph.url}
+            kind="gallery"
+            label="Foto Galeri"
+            aspect="landscape"
+            onChange={(url) => {
+              const arr = [...data.gallery];
+              arr[idx] = { ...ph, url };
+              set(arr);
+            }}
+          />
           <label>
             <span className="lbl">Caption (opsional)</span>
             <input
@@ -595,13 +609,6 @@ function GalleryTab({
               maxLength={120}
             />
           </label>
-          {ph.url ? (
-            <img
-              src={ph.url}
-              alt=""
-              className="mt-2 h-24 w-24 rounded object-cover"
-            />
-          ) : null}
         </>
       )}
       onRemove={(idx) => set(data.gallery.filter((_, i) => i !== idx))}
@@ -752,10 +759,12 @@ function GuestsTab({
   project,
   onAdd,
   onRemove,
+  onUpdate,
 }: {
   project: ReturnType<typeof useProjects>["projects"][number];
   onAdd: (g: { name: string; group?: string; pax: number; slug: string }) => void;
   onRemove: (id: string) => void;
+  onUpdate: (id: string, patch: Partial<Guest>) => void;
 }) {
   const [name, setName] = useState("");
   const [group, setGroup] = useState("");
@@ -837,6 +846,7 @@ function GuestsTab({
               <th className="px-3 py-2">Nama</th>
               <th className="px-3 py-2">Grup</th>
               <th className="px-3 py-2">Pax</th>
+              <th className="px-3 py-2">QR</th>
               <th className="px-3 py-2">Tautan</th>
               <th className="px-3 py-2"></th>
             </tr>
@@ -844,7 +854,7 @@ function GuestsTab({
           <tbody>
             {project.guests.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-3 py-6 text-center text-muted-foreground">
+                <td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">
                   Belum ada tamu.
                 </td>
               </tr>
@@ -852,10 +862,20 @@ function GuestsTab({
             {project.guests.map((g) => {
               const url = `/u/${project.slug}?tamu=${encodeURIComponent(g.name)}`;
               return (
-                <tr key={g.id} className="border-t border-border">
+                <tr key={g.id} className="border-t border-border align-top">
                   <td className="px-3 py-2 font-medium">{g.name}</td>
                   <td className="px-3 py-2 text-muted-foreground">{g.group ?? "—"}</td>
                   <td className="px-3 py-2">{g.pax}</td>
+                  <td className="px-3 py-2">
+                    <GuestQrCell
+                      projectId={project.id}
+                      guestId={g.id}
+                      qrPath={g.qr}
+                      onChange={(path) =>
+                        onUpdate(g.id, { qr: path } as Partial<Guest>)
+                      }
+                    />
+                  </td>
                   <td className="px-3 py-2">
                     <a
                       href={url}
@@ -899,6 +919,80 @@ function GuestsTab({
 
 function Row({ children }: { children: React.ReactNode }) {
   return <div className="grid gap-3 md:grid-cols-2">{children}</div>;
+}
+
+function GuestQrCell({
+  projectId,
+  guestId,
+  qrPath,
+  onChange,
+}: {
+  projectId: string;
+  guestId: string;
+  qrPath?: string;
+  onChange: (path: string) => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!qrPath) {
+      setPreview(null);
+      return;
+    }
+    getSignedUrl("guest-qr", qrPath, 3600).then((u) => {
+      if (!cancelled) setPreview(u);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [qrPath]);
+
+  async function onPick(file: File) {
+    setBusy(true);
+    setErr(null);
+    try {
+      const { path } = await uploadGuestQr(projectId, guestId, file);
+      onChange(path);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Gagal upload");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      {preview ? (
+        <img
+          src={preview}
+          alt="QR"
+          className="h-12 w-12 rounded border border-border object-contain"
+          loading="lazy"
+        />
+      ) : (
+        <div className="grid h-12 w-12 place-items-center rounded border border-dashed border-border text-[10px] text-muted-foreground">
+          QR
+        </div>
+      )}
+      <label className="cursor-pointer rounded border border-border px-2 py-1 text-[11px] hover:bg-muted">
+        {busy ? "…" : qrPath ? "Ganti" : "Unggah"}
+        <input
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) onPick(f);
+            e.target.value = "";
+          }}
+        />
+      </label>
+      {err ? <span className="text-[10px] text-destructive">{err}</span> : null}
+    </div>
+  );
 }
 
 function RepeaterList<T extends { id: string }>({

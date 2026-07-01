@@ -21,6 +21,7 @@ import { Route as PreviewTemplateSlugRouteImport } from './routes/preview.$templ
 import { Route as AdminTemplatesRouteImport } from './routes/admin.templates'
 import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminProjectsRouteImport } from './routes/admin.projects'
 import { Route as WoProjectsProjectIdRouteImport } from './routes/wo.projects.$projectId'
 import { Route as WoProjectsProjectIdRsvpRouteImport } from './routes/wo.projects.$projectId.rsvp'
 
@@ -84,6 +85,11 @@ const AdminSettingsRoute = AdminSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminProjectsRoute = AdminProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => AdminRoute,
+} as any)
 const WoProjectsProjectIdRoute = WoProjectsProjectIdRouteImport.update({
   id: '/projects/$projectId',
   path: '/projects/$projectId',
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/login': typeof LoginRoute
   '/wo': typeof WoRouteWithChildren
+  '/admin/projects': typeof AdminProjectsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/team': typeof AdminTeamRoute
   '/admin/templates': typeof AdminTemplatesRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/admin/projects': typeof AdminProjectsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/team': typeof AdminTeamRoute
   '/admin/templates': typeof AdminTemplatesRoute
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/login': typeof LoginRoute
   '/wo': typeof WoRouteWithChildren
+  '/admin/projects': typeof AdminProjectsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/team': typeof AdminTeamRoute
   '/admin/templates': typeof AdminTemplatesRoute
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/login'
     | '/wo'
+    | '/admin/projects'
     | '/admin/settings'
     | '/admin/team'
     | '/admin/templates'
@@ -163,6 +173,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/admin/projects'
     | '/admin/settings'
     | '/admin/team'
     | '/admin/templates'
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/login'
     | '/wo'
+    | '/admin/projects'
     | '/admin/settings'
     | '/admin/team'
     | '/admin/templates'
@@ -286,6 +298,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSettingsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/projects': {
+      id: '/admin/projects'
+      path: '/projects'
+      fullPath: '/admin/projects'
+      preLoaderRoute: typeof AdminProjectsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/wo/projects/$projectId': {
       id: '/wo/projects/$projectId'
       path: '/projects/$projectId'
@@ -304,6 +323,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminProjectsRoute: typeof AdminProjectsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminTeamRoute: typeof AdminTeamRoute
   AdminTemplatesRoute: typeof AdminTemplatesRoute
@@ -311,6 +331,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminProjectsRoute: AdminProjectsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminTeamRoute: AdminTeamRoute,
   AdminTemplatesRoute: AdminTemplatesRoute,

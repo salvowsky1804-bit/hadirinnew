@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useProjects } from "@/lib/projects-store";
+import { submitPublicRsvp, submitPublicWish } from "@/lib/public-invitation";
 import type { RsvpStatus } from "@/types/invitation";
 
 interface Props {
@@ -9,27 +9,45 @@ interface Props {
 }
 
 export function RsvpForm({ projectId, guestName, theme }: Props) {
-  const { addRsvp, addWish } = useProjects();
   const [name, setName] = useState(guestName ?? "");
   const [status, setStatus] = useState<RsvpStatus>("attending");
   const [pax, setPax] = useState(1);
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const isDark = theme === "dark";
   const inputCls = isDark
     ? "w-full rounded-md border border-[var(--gilded)]/30 bg-white/5 px-3 py-2 text-[var(--ivory)] placeholder:text-[var(--ivory)]/40 focus:border-[var(--gilded)] focus:outline-none"
     : "w-full rounded-md border border-[var(--bordeaux)]/20 bg-white px-3 py-2 text-[var(--charcoal)] placeholder:text-[var(--stone)]/60 focus:border-[var(--bordeaux)] focus:outline-none";
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!projectId || !name.trim()) return;
-    addRsvp(projectId, { guestName: name.trim(), status, pax });
-    if (message.trim()) {
-      addWish(projectId, { guestName: name.trim(), message: message.trim() });
+    if (!projectId || !name.trim() || busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await submitPublicRsvp({
+        projectId,
+        name: name.trim(),
+        status,
+        pax,
+      });
+      if (message.trim()) {
+        await submitPublicWish({
+          projectId,
+          name: name.trim(),
+          message: message.trim(),
+        });
+      }
+      setSubmitted(true);
+      setMessage("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Gagal mengirim.");
+    } finally {
+      setBusy(false);
     }
-    setSubmitted(true);
-    setMessage("");
   };
 
   if (submitted) {
@@ -106,14 +124,20 @@ export function RsvpForm({ projectId, guestName, theme }: Props) {
       </div>
       <button
         type="submit"
+        disabled={busy}
         className={`w-full rounded-full px-6 py-3 text-xs font-medium uppercase tracking-[0.3em] transition hover:scale-[1.01] ${
           isDark
             ? "bg-[var(--gilded)] text-[#1a1612]"
             : "bg-[var(--bordeaux)] text-[var(--ivory)]"
-        }`}
+        } disabled:opacity-60`}
       >
-        Kirim Konfirmasi
+        {busy ? "Mengirim…" : "Kirim Konfirmasi"}
       </button>
+      {error ? (
+        <p role="alert" className="text-xs text-red-500">
+          {error}
+        </p>
+      ) : null}
     </form>
   );
 }

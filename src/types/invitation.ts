@@ -54,6 +54,8 @@ export interface Guest {
   group?: string;
   pax: number;
   slug: string; // appended to invitation URL
+  /** Storage path to the guest's QR image inside the `guest-qr` bucket. */
+  qr?: string;
 }
 
 export type RsvpStatus = "attending" | "not_attending" | "tentative";
