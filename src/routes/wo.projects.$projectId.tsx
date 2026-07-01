@@ -268,9 +268,11 @@ function SummaryTab({
 
 function CoupleTab({
   data,
+  projectId,
   onChange,
 }: {
   data: InvitationData;
+  projectId: string;
   onChange: (d: InvitationData) => void;
 }) {
   const update = (key: "groom" | "bride", patch: Partial<Person>) =>
@@ -283,6 +285,7 @@ function CoupleTab({
             {k === "groom" ? "Mempelai Pria" : "Mempelai Wanita"}
           </legend>
           <PersonField
+            projectId={projectId}
             person={data[k]}
             onChange={(patch) => update(k, patch)}
           />
@@ -294,9 +297,11 @@ function CoupleTab({
 
 function PersonField({
   person,
+  projectId,
   onChange,
 }: {
   person: Person;
+  projectId: string;
   onChange: (p: Partial<Person>) => void;
 }) {
   return (
@@ -338,15 +343,16 @@ function PersonField({
         </label>
       </Row>
       <Row>
-        <label>
-          <span className="lbl">Foto (URL)</span>
-          <input
-            className="input"
+        <div>
+          <PhotoUpload
+            projectId={projectId}
             value={person.photo ?? ""}
-            onChange={(e) => onChange({ photo: e.target.value })}
-            placeholder="https://…"
+            kind="person"
+            aspect="portrait"
+            label="Foto"
+            onChange={(url) => onChange({ photo: url })}
           />
-        </label>
+        </div>
         <label>
           <span className="lbl">Instagram</span>
           <input
