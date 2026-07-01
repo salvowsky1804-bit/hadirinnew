@@ -104,9 +104,9 @@ function rsvpRow(r: any): RsvpEntry {
     id: r.id,
     guestName: r.name,
     status:
-      r.attendance === "yes"
+      r.attendance === "hadir"
         ? "attending"
-        : r.attendance === "maybe"
+        : r.attendance === "ragu"
           ? "tentative"
           : "not_attending",
     pax: r.head_count ?? 1,
@@ -114,8 +114,10 @@ function rsvpRow(r: any): RsvpEntry {
   };
 }
 
-function statusToAttendance(s: RsvpEntry["status"]): string {
-  return s === "attending" ? "yes" : s === "tentative" ? "maybe" : "no";
+function statusToAttendance(
+  s: RsvpEntry["status"],
+): "hadir" | "tidak_hadir" | "ragu" {
+  return s === "attending" ? "hadir" : s === "tentative" ? "ragu" : "tidak_hadir";
 }
 
 function wishRow(w: any): WishEntry {
