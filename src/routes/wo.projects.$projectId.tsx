@@ -1,7 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useProjects, slugify } from "@/lib/projects-store";
 import { getTemplate } from "@/lib/template-registry";
+import { PhotoUpload } from "@/components/PhotoUpload";
+import { uploadGuestQr, getSignedUrl } from "@/lib/media";
 import type {
   GalleryPhoto,
   GiftAccount,
@@ -9,6 +11,7 @@ import type {
   InvitationEvent,
   LoveStoryMoment,
   Person,
+  Guest,
 } from "@/types/invitation";
 import type { TemplateFieldDef } from "@/types/template";
 
@@ -36,6 +39,7 @@ function ProjectEditor() {
     removeProject,
     addGuest,
     removeGuest,
+    updateGuest,
   } = useProjects();
   const project = getProject(projectId);
   const [tab, setTab] = useState<Tab>("ringkasan");
@@ -162,6 +166,7 @@ function ProjectEditor() {
         )}
         {tab === "pasangan" && (
           <CoupleTab
+            projectId={project.id}
             data={project.data}
             onChange={(d) => updateData(project.id, () => d)}
           />
@@ -180,6 +185,7 @@ function ProjectEditor() {
         )}
         {tab === "galeri" && (
           <GalleryTab
+            projectId={project.id}
             data={project.data}
             onChange={(d) => updateData(project.id, () => d)}
           />
@@ -202,6 +208,7 @@ function ProjectEditor() {
             project={project}
             onAdd={(g) => addGuest(project.id, g)}
             onRemove={(gid) => removeGuest(project.id, gid)}
+            onUpdate={(gid, patch) => updateGuest(project.id, gid, patch)}
           />
         )}
       </div>
