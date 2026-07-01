@@ -24,6 +24,7 @@ export type Database = {
           notes: string | null
           plus_ones: number
           project_id: string
+          qr_path: string | null
           updated_at: string
         }
         Insert: {
@@ -35,6 +36,7 @@ export type Database = {
           notes?: string | null
           plus_ones?: number
           project_id: string
+          qr_path?: string | null
           updated_at?: string
         }
         Update: {
@@ -46,6 +48,7 @@ export type Database = {
           notes?: string | null
           plus_ones?: number
           project_id?: string
+          qr_path?: string | null
           updated_at?: string
         }
         Relationships: [
