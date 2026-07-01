@@ -759,10 +759,12 @@ function GuestsTab({
   project,
   onAdd,
   onRemove,
+  onUpdate,
 }: {
   project: ReturnType<typeof useProjects>["projects"][number];
   onAdd: (g: { name: string; group?: string; pax: number; slug: string }) => void;
   onRemove: (id: string) => void;
+  onUpdate: (id: string, patch: Partial<Guest>) => void;
 }) {
   const [name, setName] = useState("");
   const [group, setGroup] = useState("");
@@ -844,6 +846,7 @@ function GuestsTab({
               <th className="px-3 py-2">Nama</th>
               <th className="px-3 py-2">Grup</th>
               <th className="px-3 py-2">Pax</th>
+              <th className="px-3 py-2">QR</th>
               <th className="px-3 py-2">Tautan</th>
               <th className="px-3 py-2"></th>
             </tr>
@@ -851,7 +854,7 @@ function GuestsTab({
           <tbody>
             {project.guests.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-3 py-6 text-center text-muted-foreground">
+                <td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">
                   Belum ada tamu.
                 </td>
               </tr>
@@ -859,10 +862,20 @@ function GuestsTab({
             {project.guests.map((g) => {
               const url = `/u/${project.slug}?tamu=${encodeURIComponent(g.name)}`;
               return (
-                <tr key={g.id} className="border-t border-border">
+                <tr key={g.id} className="border-t border-border align-top">
                   <td className="px-3 py-2 font-medium">{g.name}</td>
                   <td className="px-3 py-2 text-muted-foreground">{g.group ?? "—"}</td>
                   <td className="px-3 py-2">{g.pax}</td>
+                  <td className="px-3 py-2">
+                    <GuestQrCell
+                      projectId={project.id}
+                      guestId={g.id}
+                      qrPath={g.qr}
+                      onChange={(path) =>
+                        onUpdate(g.id, { qr: path } as Partial<Guest>)
+                      }
+                    />
+                  </td>
                   <td className="px-3 py-2">
                     <a
                       href={url}
