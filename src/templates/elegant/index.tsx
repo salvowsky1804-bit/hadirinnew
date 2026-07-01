@@ -558,3 +558,46 @@ function VerticalSideText({ text, side }: { text: string; side: "left" | "right"
     </div>
   );
 }
+
+/* ---------- Guest QR ---------- */
+function GuestQrSection({
+  projectId,
+  guestName,
+  bgImage,
+}: {
+  projectId: string;
+  guestName: string;
+  bgImage: string;
+}) {
+  const qrUrl = usePublicGuestQr(projectId, guestName);
+  if (!qrUrl) return null;
+  return (
+    <SectionShell bgImage={bgImage} sideLabel="ENTRY" ornaments particles={4} className="text-center">
+      <Reveal>
+        <p className="font-sans text-[10px] uppercase elegant-track-3 text-[var(--gold)]">
+          Digital Pass
+        </p>
+        <h2
+          className="mt-4 font-serif text-4xl italic md:text-5xl"
+          style={{ fontFamily: '"Playfair Display", serif' }}
+        >
+          QR Kehadiran
+        </h2>
+        <p className="mx-auto mt-4 max-w-md font-serif text-[var(--cream)]/80">
+          Tunjukkan QR ini di meja registrasi. Simpan atau screenshot untuk memudahkan.
+        </p>
+        <div className="mx-auto mt-10 w-full max-w-xs border border-[var(--gold)]/40 bg-white p-5">
+          <img
+            src={qrUrl}
+            alt={`QR undangan ${guestName}`}
+            className="mx-auto h-auto w-full max-w-[260px] object-contain"
+            loading="lazy"
+          />
+          <p className="mt-4 font-serif text-sm italic text-[var(--onyx)]">
+            {guestName}
+          </p>
+        </div>
+      </Reveal>
+    </SectionShell>
+  );
+}
