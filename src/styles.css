@@ -81,7 +81,7 @@
   --stone: oklch(0.52 0.012 60);
   --onyx: oklch(0.18 0.008 60);
   --onyx-soft: oklch(0.26 0.01 60);
-  --gold: oklch(0.78 0.10 80);
+  --gold: oklch(0.78 0.1 80);
   --line: oklch(0.55 0.018 65);
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
@@ -161,47 +161,19 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
-
-  /* Cursor affordances — interactive elements always show pointer,
-     disabled shows not-allowed, text inputs show text caret. */
-  button,
-  a,
-  [role="button"],
-  [role="link"],
-  [role="tab"],
-  [role="menuitem"],
-  [role="option"],
-  [role="switch"],
-  [role="checkbox"],
-  [role="radio"],
-  summary,
-  label[for],
-  select,
-  [data-slot="trigger"],
-  [data-state][data-slot] {
-    cursor: pointer;
-  }
-
-  button:disabled,
-  [aria-disabled="true"],
-  [data-disabled],
-  input:disabled,
-  select:disabled,
-  textarea:disabled {
-    cursor: not-allowed;
-  }
-
-  input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="file"]):not([type="range"]):not([type="color"]),
-  textarea,
-  [contenteditable="true"] {
-    cursor: text;
-  }
 }
 
 /* ====== Elegant Onyx template utilities ====== */
 @layer utilities {
   .elegant-shimmer-gold {
-    background: linear-gradient(100deg, var(--cream) 0%, var(--cream) 35%, var(--gold) 50%, var(--cream) 65%, var(--cream) 100%);
+    background: linear-gradient(
+      100deg,
+      var(--cream) 0%,
+      var(--cream) 35%,
+      var(--gold) 50%,
+      var(--cream) 65%,
+      var(--cream) 100%
+    );
     background-size: 200% 100%;
     -webkit-background-clip: text;
     background-clip: text;
@@ -209,35 +181,61 @@
     animation: elegantShimmer 5s ease-in-out infinite;
   }
   @keyframes elegantShimmer {
-    0% { background-position: 200% 50%; }
-    100% { background-position: -100% 50%; }
+    0% {
+      background-position: 200% 50%;
+    }
+    100% {
+      background-position: -100% 50%;
+    }
   }
   .elegant-float {
     animation: elegantFloat 9s ease-in-out infinite;
     will-change: transform;
   }
   @keyframes elegantFloat {
-    0%, 100% { transform: translate3d(0, 0, 0); }
-    50% { transform: translate3d(0, -8px, 0); }
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, -8px, 0);
+    }
   }
   .elegant-glow {
     animation: elegantGlow 3.6s ease-in-out infinite;
   }
   @keyframes elegantGlow {
-    0%, 100% { box-shadow: 0 0 18px 0 oklch(0.85 0.09 80 / 0.18); }
-    50% { box-shadow: 0 0 36px 4px oklch(0.85 0.09 80 / 0.45); }
+    0%,
+    100% {
+      box-shadow: 0 0 18px 0 oklch(0.85 0.09 80 / 0.18);
+    }
+    50% {
+      box-shadow: 0 0 36px 4px oklch(0.85 0.09 80 / 0.45);
+    }
   }
   .elegant-ken-burns {
     animation: elegantKenBurns 18s ease-in-out infinite alternate;
   }
   @keyframes elegantKenBurns {
-    from { transform: scale(1.05); }
-    to { transform: scale(1.18); }
+    from {
+      transform: scale(1.05);
+    }
+    to {
+      transform: scale(1.18);
+    }
   }
-  .elegant-fade-up { animation: elegantFadeUp 1.2s ease-out both; }
+  .elegant-fade-up {
+    animation: elegantFadeUp 1.2s ease-out both;
+  }
   @keyframes elegantFadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   .elegant-particle {
     position: absolute;
@@ -249,13 +247,28 @@
     animation-iteration-count: infinite;
   }
   @keyframes elegantParticleDrift {
-    0% { transform: translate3d(0, 0, 0) scale(0.6); opacity: 0; }
-    10% { opacity: 0.9; }
-    50% { transform: translate3d(20px, -55vh, 0) scale(1); opacity: 0.7; }
-    100% { transform: translate3d(-10px, -110vh, 0) scale(0.4); opacity: 0; }
+    0% {
+      transform: translate3d(0, 0, 0) scale(0.6);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.9;
+    }
+    50% {
+      transform: translate3d(20px, -55vh, 0) scale(1);
+      opacity: 0.7;
+    }
+    100% {
+      transform: translate3d(-10px, -110vh, 0) scale(0.4);
+      opacity: 0;
+    }
   }
-  .elegant-track-3 { letter-spacing: 0.45em; }
-  .elegant-track-2 { letter-spacing: 0.32em; }
+  .elegant-track-3 {
+    letter-spacing: 0.45em;
+  }
+  .elegant-track-2 {
+    letter-spacing: 0.32em;
+  }
   .elegant-scroll-line {
     position: relative;
     display: inline-block;
@@ -275,9 +288,17 @@
     animation: elegantScroll 2.2s ease-in-out infinite;
   }
   @keyframes elegantScroll {
-    0% { top: -40%; opacity: 0; }
-    30% { opacity: 1; }
-    100% { top: 110%; opacity: 0; }
+    0% {
+      top: -40%;
+      opacity: 0;
+    }
+    30% {
+      opacity: 1;
+    }
+    100% {
+      top: 110%;
+      opacity: 0;
+    }
   }
   .elegant-corner {
     position: absolute;
@@ -287,7 +308,10 @@
     opacity: 0.55;
     color: var(--gold);
   }
-  .elegant-corner svg { width: 100%; height: 100%; }
+  .elegant-corner svg {
+    width: 100%;
+    height: 100%;
+  }
   .elegant-divider-floral {
     display: flex;
     align-items: center;
@@ -301,5 +325,151 @@
     height: 1px;
     width: 56px;
     background: linear-gradient(to right, transparent, currentColor, transparent);
+  }
+}
+
+/* ============================================================
+   Landing page — interaction layer (withjoy-style motion)
+   Self-contained, prefixed `lp-`, GPU-friendly, reduced-motion safe.
+   ============================================================ */
+@layer utilities {
+  /* Entrance: rise + fade on load (above-the-fold hero) */
+  .lp-rise {
+    animation: lpRise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  @keyframes lpRise {
+    from {
+      opacity: 0;
+      transform: translateY(26px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Gentle multi-speed drift for floating feature chips */
+  .lp-float {
+    animation: lpFloat 7s ease-in-out infinite;
+    will-change: transform;
+  }
+  .lp-float-slow {
+    animation: lpFloat 11s ease-in-out infinite;
+    will-change: transform;
+  }
+  .lp-float-rev {
+    animation: lpFloatRev 9s ease-in-out infinite;
+    will-change: transform;
+  }
+  @keyframes lpFloat {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, -14px, 0);
+    }
+  }
+  @keyframes lpFloatRev {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, 13px, 0);
+    }
+  }
+
+  /* Equalizer bars for the "now playing" chip */
+  .lp-eq {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 13px;
+  }
+  .lp-eq i {
+    width: 2.5px;
+    height: 5px;
+    background: currentColor;
+    border-radius: 2px;
+    animation: lpEq 1s ease-in-out infinite;
+  }
+  .lp-eq i:nth-child(2) {
+    animation-delay: 0.25s;
+  }
+  .lp-eq i:nth-child(3) {
+    animation-delay: 0.45s;
+  }
+  .lp-eq i:nth-child(4) {
+    animation-delay: 0.12s;
+  }
+  @keyframes lpEq {
+    0%,
+    100% {
+      height: 4px;
+    }
+    50% {
+      height: 13px;
+    }
+  }
+
+  /* Soft pulsing halo behind the photo */
+  .lp-breathe {
+    animation: lpBreathe 6.5s ease-in-out infinite;
+  }
+  @keyframes lpBreathe {
+    0%,
+    100% {
+      opacity: 0.45;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+  }
+
+  /* Marquee track (duplicated content, translate -50%) */
+  .lp-marquee {
+    animation: lpMarquee 36s linear infinite;
+  }
+  @keyframes lpMarquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Scroll-down hint */
+  .lp-scrollhint {
+    animation: lpScrollHint 2.2s ease-in-out infinite;
+  }
+  @keyframes lpScrollHint {
+    0% {
+      transform: translateY(0);
+      opacity: 0;
+    }
+    35% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(14px);
+      opacity: 0;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-rise,
+  .lp-float,
+  .lp-float-slow,
+  .lp-float-rev,
+  .lp-breathe,
+  .lp-eq i,
+  .lp-marquee,
+  .lp-scrollhint {
+    animation: none !important;
   }
 }
