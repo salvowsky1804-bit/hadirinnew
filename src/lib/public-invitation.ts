@@ -140,3 +140,39 @@ export function usePublicWishes(projectId: string | undefined) {
 
   return { wishes, reload: () => setReloadFlag((x) => x + 1) };
 }
+
+/** Fetch signed URL for the QR image of a specific guest name in a project. */
+export function usePublicGuestQr(
+  projectId: string | undefined,
+  guestName: string | undefined,
+) {
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!projectId || !guestName) {
+      setUrl(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("guests")
+        .select("qr_path")
+        .eq("project_id", projectId)
+        .eq("name", guestName)
+        .maybeSingle();
+      const path = (data as { qr_path?: string } | null)?.qr_path;
+      if (!path) {
+        if (!cancelled) setUrl(null);
+        return;
+      }
+      const { data: signed } = await supabase.storage
+        .from("guest-qr")
+        .createSignedUrl(path, 60 * 60 * 24);
+      if (!cancelled) setUrl(signed?.signedUrl ?? null);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [projectId, guestName]);
+  return url;
+}

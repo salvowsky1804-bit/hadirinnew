@@ -71,6 +71,23 @@ export async function uploadGuestQr(
   return { path, url: data.signedUrl };
 }
 
+export async function uploadInvitationAudio(
+  projectId: string,
+  file: File,
+): Promise<{ path: string; url: string }> {
+  const e = ext(file);
+  const path = `${projectId}/audio/${randId()}.${e}`;
+  const { error } = await supabase.storage
+    .from("invitation-media")
+    .upload(path, file, { contentType: file.type || "audio/mpeg", upsert: false });
+  if (error) throw new Error(error.message);
+  const { data, error: sErr } = await supabase.storage
+    .from("invitation-media")
+    .createSignedUrl(path, FIVE_YEARS);
+  if (sErr || !data) throw new Error(sErr?.message ?? "signed url failed");
+  return { path, url: data.signedUrl };
+}
+
 export async function getSignedUrl(
   bucket: "invitation-media" | "guest-qr",
   path: string,
