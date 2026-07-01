@@ -564,9 +564,11 @@ function StoryTab({
 
 function GalleryTab({
   data,
+  projectId,
   onChange,
 }: {
   data: InvitationData;
+  projectId: string;
   onChange: (d: InvitationData) => void;
 }) {
   const set = (gallery: GalleryPhoto[]) => onChange({ ...data, gallery });
@@ -582,19 +584,18 @@ function GalleryTab({
       empty="Galeri kosong."
       renderItem={(ph, idx) => (
         <>
-          <label>
-            <span className="lbl">URL Foto</span>
-            <input
-              className="input"
-              value={ph.url}
-              onChange={(e) => {
-                const arr = [...data.gallery];
-                arr[idx] = { ...ph, url: e.target.value };
-                set(arr);
-              }}
-              placeholder="https://…"
-            />
-          </label>
+          <PhotoUpload
+            projectId={projectId}
+            value={ph.url}
+            kind="gallery"
+            label="Foto Galeri"
+            aspect="landscape"
+            onChange={(url) => {
+              const arr = [...data.gallery];
+              arr[idx] = { ...ph, url };
+              set(arr);
+            }}
+          />
           <label>
             <span className="lbl">Caption (opsional)</span>
             <input
@@ -608,13 +609,6 @@ function GalleryTab({
               maxLength={120}
             />
           </label>
-          {ph.url ? (
-            <img
-              src={ph.url}
-              alt=""
-              className="mt-2 h-24 w-24 rounded object-cover"
-            />
-          ) : null}
         </>
       )}
       onRemove={(idx) => set(data.gallery.filter((_, i) => i !== idx))}
