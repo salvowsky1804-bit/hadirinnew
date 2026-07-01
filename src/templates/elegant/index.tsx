@@ -6,6 +6,7 @@ import { Countdown } from "../_shared/Countdown";
 import { RsvpForm } from "../_shared/RsvpForm";
 import { WishesWall } from "../_shared/WishesWall";
 import { formatDateID } from "../_shared/utils";
+import { usePublicGuestQr } from "@/lib/public-invitation";
 import { AmbientParticles } from "./AmbientParticles";
 import { SectionShell } from "./SectionShell";
 
@@ -208,7 +209,7 @@ export default function ElegantTemplate({ data, guestName, projectId }: Template
 
       {/* ============ STORY ============ */}
       {data.loveStory.length > 0 && (
-        <section className="px-6 py-24">
+        <SectionShell bgImage={heroImg} sideLabel="STORY" particles={3}>
           <Reveal className="text-center">
             <p className="font-sans text-[10px] uppercase elegant-track-3 text-[var(--gold)]">
               Our Journey
@@ -220,7 +221,7 @@ export default function ElegantTemplate({ data, guestName, projectId }: Template
               Kisah Kami
             </h2>
           </Reveal>
-          <ol className="relative mx-auto mt-12 max-w-2xl border-l border-[var(--gold)]/40 pl-8">
+          <ol className="relative mx-auto mt-12 border-l border-[var(--gold)]/40 pl-8">
             {data.loveStory.map((m) => (
               <Reveal as="li" key={m.id} className="mb-10 last:mb-0">
                 <span className="absolute -left-[7px] mt-2 block h-3 w-3 rotate-45 bg-[var(--gold)]" />
@@ -237,12 +238,12 @@ export default function ElegantTemplate({ data, guestName, projectId }: Template
               </Reveal>
             ))}
           </ol>
-        </section>
+        </SectionShell>
       )}
 
       {/* ============ GALLERY ============ */}
       {data.gallery.length > 0 && (
-        <section className="px-6 py-24">
+        <SectionShell bgImage={heroImg} sideLabel="GALLERY" particles={3}>
           <Reveal className="text-center">
             <p className="font-sans text-[10px] uppercase elegant-track-3 text-[var(--gold)]">
               Moments
@@ -254,7 +255,7 @@ export default function ElegantTemplate({ data, guestName, projectId }: Template
               Galeri
             </h2>
           </Reveal>
-          <div className="mx-auto mt-12 grid max-w-5xl grid-cols-2 gap-3 md:grid-cols-3">
+          <div className="mt-12 grid grid-cols-2 gap-3 md:grid-cols-3">
             {data.gallery.map((g, i) => (
               <Reveal key={g.id} delay={i * 60}>
                 <div className="group relative overflow-hidden">
@@ -269,7 +270,7 @@ export default function ElegantTemplate({ data, guestName, projectId }: Template
               </Reveal>
             ))}
           </div>
-        </section>
+        </SectionShell>
       )}
 
       {/* ============ GIFTS ============ */}
@@ -309,9 +310,14 @@ export default function ElegantTemplate({ data, guestName, projectId }: Template
         </SectionShell>
       )}
 
+      {/* ============ GUEST QR ============ */}
+      {guestName && projectId && (
+        <GuestQrSection projectId={projectId} guestName={guestName} bgImage={heroImg} />
+      )}
+
       {/* ============ RSVP & WISHES ============ */}
       <SectionShell bgImage={heroImg} sideLabel="RSVP" ornaments particles={5}>
-        <div className="mx-auto grid max-w-5xl gap-12 md:grid-cols-2">
+        <div className="grid gap-12 md:grid-cols-2">
           <Reveal>
             <p className="font-sans text-[10px] uppercase elegant-track-3 text-[var(--gold)]">
               RSVP
