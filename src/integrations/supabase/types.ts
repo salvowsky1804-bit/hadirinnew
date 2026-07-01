@@ -330,6 +330,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_manage_project_file: {
+        Args: { _bucket: string; _name: string }
+        Returns: boolean
+      }
       current_user_is_admin: { Args: never; Returns: boolean }
       has_role: {
         Args: {
