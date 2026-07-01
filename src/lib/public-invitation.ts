@@ -82,13 +82,17 @@ export async function submitPublicRsvp(input: {
   pax: number;
 }) {
   const attendance =
-    input.status === "attending" ? "yes" : input.status === "tentative" ? "maybe" : "no";
+    input.status === "attending"
+      ? "hadir"
+      : input.status === "tentative"
+        ? "ragu"
+        : "tidak_hadir";
   const { error } = await supabase.from("rsvps").insert({
     project_id: input.projectId,
     name: input.name,
     attendance,
     head_count: input.pax,
-  } as any);
+  });
   if (error) throw new Error(error.message);
 }
 
