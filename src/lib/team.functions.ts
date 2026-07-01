@@ -36,34 +36,35 @@ export const listWoMembers = createServerFn({ method: "GET" })
     const ids = (roles ?? []).map((r) => r.user_id);
     if (ids.length === 0) return [];
 
-    const [{ data: profiles }, { data: projects }, usersRes] =
-      await Promise.all([
-        supabaseAdmin
-          .from("profiles")
-          .select("id, full_name, phone, active, created_at")
-          .in("id", ids),
-        supabaseAdmin
-          .from("projects")
-          .select("owner_id")
-          .in("owner_id", ids),
-        supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
-      ]);
+    const [profilesRes, projectsRes, usersRes] = await Promise.all([
+      supabaseAdmin
+        .from("profiles")
+        .select("id, full_name, phone, active, created_at")
+        .in("id", ids),
+      supabaseAdmin.from("projects").select("owner_id").in("owner_id", ids),
+      supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 }).catch(
+        (e) => ({ data: { users: [] }, error: e as Error }),
+      ),
+    ]);
+    if (profilesRes.error) throw new Error(profilesRes.error.message);
+    const profiles = profilesRes.data ?? [];
+    const projects = projectsRes.data ?? [];
 
     const emailById = new Map<string, string>();
     for (const u of usersRes.data?.users ?? []) {
       if (u.id && u.email) emailById.set(u.id, u.email);
     }
     const countById = new Map<string, number>();
-    for (const p of projects ?? []) {
+    for (const p of projects) {
       countById.set(p.owner_id, (countById.get(p.owner_id) ?? 0) + 1);
     }
 
-    return (profiles ?? []).map((p) => ({
+    return profiles.map((p) => ({
       id: p.id,
       name: p.full_name || emailById.get(p.id) || "Tanpa nama",
       email: emailById.get(p.id) ?? "",
       phone: p.phone,
-      active: p.active,
+      active: p.active ?? true,
       joinedAt: p.created_at,
       projectCount: countById.get(p.id) ?? 0,
     }));
