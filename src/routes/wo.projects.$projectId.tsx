@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useProjects, slugify } from "@/lib/projects-store";
 import { getTemplate } from "@/lib/template-registry";
 import { PhotoUpload } from "@/components/PhotoUpload";
-import { uploadGuestQr, getSignedUrl } from "@/lib/media";
+import { uploadGuestQr, uploadInvitationAudio, getSignedUrl } from "@/lib/media";
 import type {
   GalleryPhoto,
   GiftAccount,
@@ -162,6 +162,7 @@ function ProjectEditor() {
           <SummaryTab
             project={project}
             onChange={(patch) => updateProject(project.id, (p) => ({ ...p, ...patch }))}
+            onChangeData={(d) => updateData(project.id, () => d)}
           />
         )}
         {tab === "pasangan" && (
@@ -224,10 +225,32 @@ type ProjectPatch = { coupleLabel?: string; slug?: string; eventDate?: string };
 function SummaryTab({
   project,
   onChange,
+  onChangeData,
 }: {
   project: ReturnType<typeof useProjects>["projects"][number];
   onChange: (patch: ProjectPatch) => void;
+  onChangeData: (d: InvitationData) => void;
 }) {
+  const settings = project.data.settings ?? {};
+  const updateSettings = (patch: Partial<typeof settings>) =>
+    onChangeData({
+      ...project.data,
+      settings: { ...settings, ...patch },
+    });
+  const [musicBusy, setMusicBusy] = useState(false);
+  const [musicErr, setMusicErr] = useState<string | null>(null);
+  async function onMusicFile(file: File) {
+    setMusicBusy(true);
+    setMusicErr(null);
+    try {
+      const { url } = await uploadInvitationAudio(project.id, file);
+      updateSettings({ musicUrl: url });
+    } catch (e) {
+      setMusicErr(e instanceof Error ? e.message : "Gagal upload");
+    } finally {
+      setMusicBusy(false);
+    }
+  }
   return (
     <div className="space-y-4">
       <Row>
@@ -262,6 +285,92 @@ function SummaryTab({
           Undangan: /u/{project.slug}
         </span>
       </label>
+
+      <fieldset className="space-y-3 rounded-lg border border-border p-4">
+        <legend className="px-1 font-serif text-lg">Pengaturan Undangan</legend>
+        <label className="block">
+          <span className="lbl">Kata Pembuka</span>
+          <textarea
+            className="input"
+            rows={3}
+            value={settings.greeting ?? ""}
+            onChange={(e) => updateSettings({ greeting: e.target.value })}
+            maxLength={500}
+            placeholder="Dengan memohon rahmat Tuhan Yang Maha Esa…"
+          />
+        </label>
+        <label className="block">
+          <span className="lbl">Kata Penutup</span>
+          <textarea
+            className="input"
+            rows={3}
+            value={settings.closing ?? ""}
+            onChange={(e) => updateSettings({ closing: e.target.value })}
+            maxLength={500}
+            placeholder="Merupakan kehormatan apabila Bapak/Ibu berkenan hadir…"
+          />
+        </label>
+        <div>
+          <span className="lbl">Musik Latar (mp3 / m4a)</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <label className="cursor-pointer rounded border border-border px-3 py-1.5 text-xs hover:bg-muted">
+              {musicBusy ? "Mengunggah…" : settings.musicUrl ? "Ganti file" : "Unggah file"}
+              <input
+                type="file"
+                accept="audio/*"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) onMusicFile(f);
+                  e.target.value = "";
+                }}
+              />
+            </label>
+            {settings.musicUrl ? (
+              <>
+                <audio controls src={settings.musicUrl} className="h-8" preload="none" />
+                <button
+                  type="button"
+                  onClick={() => updateSettings({ musicUrl: undefined })}
+                  className="text-xs text-destructive hover:underline"
+                >
+                  hapus
+                </button>
+              </>
+            ) : (
+              <span className="text-xs text-muted-foreground">Belum ada musik.</span>
+            )}
+          </div>
+          <label className="mt-2 block">
+            <span className="lbl">…atau tempel URL</span>
+            <input
+              className="input"
+              value={settings.musicUrl ?? ""}
+              onChange={(e) =>
+                updateSettings({ musicUrl: e.target.value || undefined })
+              }
+              placeholder="https://..."
+            />
+          </label>
+          {musicErr ? (
+            <p className="mt-1 text-xs text-destructive">{musicErr}</p>
+          ) : null}
+        </div>
+      </fieldset>
+
+      <div className="rounded-lg border border-border bg-muted/30 p-4 text-sm">
+        <p className="font-medium">Pesan Tamu &amp; RSVP</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Lihat semua ucapan tamu dan konfirmasi kehadiran di halaman terpisah.
+        </p>
+        <Link
+          to="/wo/projects/$projectId/rsvp"
+          params={{ projectId: project.id }}
+          className="mt-2 inline-block rounded-md border border-border bg-background px-3 py-1.5 text-xs hover:bg-muted"
+        >
+          Buka RSVP &amp; Ucapan ({project.rsvps.length} RSVP · {project.wishes.length} ucapan) →
+        </Link>
+      </div>
     </div>
   );
 }
