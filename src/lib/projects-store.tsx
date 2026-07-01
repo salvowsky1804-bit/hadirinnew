@@ -331,10 +331,15 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
 
   const updateGuest: Ctx["updateGuest"] = useCallback(
     async (id, guestId, patch) => {
-      const dbPatch: Record<string, unknown> = {};
-      if ("name" in patch) dbPatch.name = patch.name;
+      const dbPatch: {
+        name?: string;
+        group_label?: string | null;
+        plus_ones?: number;
+        qr_path?: string | null;
+      } = {};
+      if ("name" in patch && patch.name !== undefined) dbPatch.name = patch.name;
       if ("group" in patch) dbPatch.group_label = patch.group ?? null;
-      if ("pax" in patch) dbPatch.plus_ones = patch.pax;
+      if ("pax" in patch && patch.pax !== undefined) dbPatch.plus_ones = patch.pax;
       if ("qr" in patch)
         dbPatch.qr_path = (patch as { qr?: string }).qr ?? null;
       setProjects((prev) =>
