@@ -40,7 +40,7 @@ function NewProjectPage() {
     if (!slug || slug === slugify(coupleLabel)) setSlug(slugify(v));
   }
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     const parsed = schema.safeParse({
@@ -57,14 +57,18 @@ function NewProjectPage() {
       setError("Slug sudah dipakai proyek lain");
       return;
     }
-    const project = createProject({
-      ...parsed.data,
-      ownerWoId: user?.id ?? "wo-unknown",
-    });
-    navigate({
-      to: "/wo/projects/$projectId",
-      params: { projectId: project.id },
-    });
+    try {
+      const project = await createProject({
+        ...parsed.data,
+        ownerWoId: user?.id ?? "wo-unknown",
+      });
+      navigate({
+        to: "/wo/projects/$projectId",
+        params: { projectId: project.id },
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Gagal membuat proyek");
+    }
   }
 
   return (
