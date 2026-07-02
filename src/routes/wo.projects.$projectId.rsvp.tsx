@@ -54,6 +54,13 @@ function RsvpPage() {
         >
           ← Editor
         </Link>
+        <Link
+          to="/wo/projects/$projectId/wishes"
+          params={{ projectId }}
+          className="rounded-md border border-border px-3 py-1.5 text-xs hover:bg-muted"
+        >
+          Kelola Ucapan →
+        </Link>
       </header>
 
       <div className="grid gap-3 sm:grid-cols-4">
