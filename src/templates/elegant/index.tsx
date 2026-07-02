@@ -69,7 +69,7 @@ export default function ElegantTemplate({ data, guestName, projectId }: Template
         bgImage={heroImg}
         particles={6}
         ornaments
-        className="min-h-[90vh] flex items-center justify-center text-center"
+        className="items-center text-center"
       >
         <Reveal className="mx-auto max-w-xl">
           <p className="font-sans text-[10px] uppercase elegant-track-3 text-[var(--gold)]">
