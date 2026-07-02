@@ -31,7 +31,9 @@ export function DashboardShell({ area, navItems, requiredRole }: Props) {
       navigate({ to: "/login" });
       return;
     }
+    // Admin dapat mengakses area WO (editor/RSVP proyek); WO tidak boleh masuk Admin.
     if (user.role !== requiredRole) {
+      if (requiredRole === "wo" && user.role === "admin") return;
       navigate({ to: user.role === "admin" ? "/admin" : "/wo" });
     }
   }, [user, loading, requiredRole, navigate]);
