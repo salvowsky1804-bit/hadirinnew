@@ -24,7 +24,7 @@ export function SectionShell({
 }: SectionShellProps) {
   return (
     <section
-      className={`relative w-full overflow-hidden px-5 py-16 sm:px-8 md:py-24 ${className}`}
+      className={`relative flex w-full min-h-[100svh] flex-col justify-center overflow-hidden px-5 py-20 sm:px-8 md:py-28 ${className}`}
     >
       {bgImage && (
         <>
