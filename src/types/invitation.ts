@@ -73,6 +73,8 @@ export interface WishEntry {
   guestName: string;
   message: string;
   submittedAt: string;
+  /** When false, wish is hidden from the public invitation. Defaults to true. */
+  visible?: boolean;
 }
 
 /**

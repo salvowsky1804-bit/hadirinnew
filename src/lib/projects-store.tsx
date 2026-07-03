@@ -45,6 +45,8 @@ interface Ctx {
   removeGuest: (id: string, guestId: string) => void;
   addRsvp: (id: string, r: Omit<RsvpEntry, "id" | "submittedAt">) => void;
   addWish: (id: string, w: Omit<WishEntry, "id" | "submittedAt">) => void;
+  setWishVisibility: (id: string, wishId: string, visible: boolean) => void;
+  removeWish: (id: string, wishId: string) => void;
 }
 
 const ProjectsCtx = createContext<Ctx | null>(null);
@@ -126,6 +128,7 @@ function wishRow(w: any): WishEntry {
     guestName: w.name,
     message: w.message,
     submittedAt: w.created_at,
+    visible: w.approved !== false,
   };
 }
 
@@ -405,6 +408,56 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
+  const setWishVisibility: Ctx["setWishVisibility"] = useCallback(
+    async (id, wishId, visible) => {
+      // Optimistic UI update
+      setProjects((prev) =>
+        prev.map((p) =>
+          p.id === id
+            ? {
+                ...p,
+                wishes: p.wishes.map((w) =>
+                  w.id === wishId ? { ...w, visible } : w,
+                ),
+              }
+            : p,
+        ),
+      );
+      const { error } = await supabase
+        .from("wishes")
+        .update({ approved: visible })
+        .eq("id", wishId);
+      if (error) {
+        // Revert on failure
+        setProjects((prev) =>
+          prev.map((p) =>
+            p.id === id
+              ? {
+                  ...p,
+                  wishes: p.wishes.map((w) =>
+                    w.id === wishId ? { ...w, visible: !visible } : w,
+                  ),
+                }
+              : p,
+          ),
+        );
+      }
+    },
+    [],
+  );
+
+  const removeWish: Ctx["removeWish"] = useCallback(async (id, wishId) => {
+    const { error } = await supabase.from("wishes").delete().eq("id", wishId);
+    if (error) return;
+    setProjects((prev) =>
+      prev.map((p) =>
+        p.id === id
+          ? { ...p, wishes: p.wishes.filter((w) => w.id !== wishId) }
+          : p,
+      ),
+    );
+  }, []);
+
   const value = useMemo<Ctx>(
     () => ({
       projects,
@@ -421,6 +474,8 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
       removeGuest,
       addRsvp,
       addWish,
+      setWishVisibility,
+      removeWish,
     }),
     [
       projects,
@@ -437,6 +492,8 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
       removeGuest,
       addRsvp,
       addWish,
+      setWishVisibility,
+      removeWish,
     ],
   );
 
