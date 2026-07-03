@@ -64,6 +64,20 @@ function WoProjectsList() {
               >
                 Lihat undangan
               </Link>
+              <Link
+                to="/wo/projects/$projectId/rsvp"
+                params={{ projectId: p.id }}
+                className="rounded-md border border-border px-3 py-1.5 hover:bg-muted"
+              >
+                RSVP
+              </Link>
+              <Link
+                to="/wo/projects/$projectId/wishes"
+                params={{ projectId: p.id }}
+                className="rounded-md border border-border px-3 py-1.5 hover:bg-muted"
+              >
+                Ucapan
+              </Link>
             </div>
           </li>
         ))}

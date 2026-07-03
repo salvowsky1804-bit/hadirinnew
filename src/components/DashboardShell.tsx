@@ -150,6 +150,7 @@ function pageTitle(pathname: string): string {
     [/^\/admin\/team/, "Kelola Akun WO"],
     [/^\/admin\/settings/, "Pengaturan"],
     [/^\/wo$/, "Daftar Proyek Undangan"],
+    [/^\/wo\/projects\/[^/]+\/wishes/, "Ucapan Tamu"],
     [/^\/wo\/projects\/[^/]+\/rsvp/, "RSVP & Ucapan"],
     [/^\/wo\/projects\/[^/]+/, "Editor Proyek"],
   ];

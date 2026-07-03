@@ -19,7 +19,7 @@ type SortKey = "newest" | "oldest" | "name";
 
 function WishesPage() {
   const { projectId } = Route.useParams();
-  const { getProject } = useProjects();
+  const { getProject, loading } = useProjects();
   const project = getProject(projectId);
 
   const [q, setQ] = useState("");
@@ -43,6 +43,14 @@ function WishesPage() {
     });
     return list;
   }, [project, q, sort]);
+
+  if (loading) {
+    return (
+      <div className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
+        Memuat ucapan tamu…
+      </div>
+    );
+  }
 
   if (!project) {
     return (
