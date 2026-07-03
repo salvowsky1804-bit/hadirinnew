@@ -15,7 +15,7 @@ import type {
 } from "@/types/invitation";
 import type { TemplateFieldDef } from "@/types/template";
 
-export const Route = createFileRoute("/wo/projects/$projectId")({
+export const Route = createFileRoute("/wo/projects/$projectId/")({
   component: ProjectEditor,
 });
 

@@ -22,7 +22,7 @@ import { Route as AdminTemplatesRouteImport } from './routes/admin.templates'
 import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminProjectsRouteImport } from './routes/admin.projects'
-import { Route as WoProjectsProjectIdRouteImport } from './routes/wo.projects.$projectId'
+import { Route as WoProjectsProjectIdIndexRouteImport } from './routes/wo.projects.$projectId.index'
 import { Route as WoProjectsProjectIdWishesRouteImport } from './routes/wo.projects.$projectId.wishes'
 import { Route as WoProjectsProjectIdRsvpRouteImport } from './routes/wo.projects.$projectId.rsvp'
 
@@ -91,21 +91,22 @@ const AdminProjectsRoute = AdminProjectsRouteImport.update({
   path: '/projects',
   getParentRoute: () => AdminRoute,
 } as any)
-const WoProjectsProjectIdRoute = WoProjectsProjectIdRouteImport.update({
-  id: '/projects/$projectId',
-  path: '/projects/$projectId',
-  getParentRoute: () => WoRoute,
-} as any)
+const WoProjectsProjectIdIndexRoute =
+  WoProjectsProjectIdIndexRouteImport.update({
+    id: '/projects/$projectId/',
+    path: '/projects/$projectId/',
+    getParentRoute: () => WoRoute,
+  } as any)
 const WoProjectsProjectIdWishesRoute =
   WoProjectsProjectIdWishesRouteImport.update({
-    id: '/wishes',
-    path: '/wishes',
-    getParentRoute: () => WoProjectsProjectIdRoute,
+    id: '/projects/$projectId/wishes',
+    path: '/projects/$projectId/wishes',
+    getParentRoute: () => WoRoute,
   } as any)
 const WoProjectsProjectIdRsvpRoute = WoProjectsProjectIdRsvpRouteImport.update({
-  id: '/rsvp',
-  path: '/rsvp',
-  getParentRoute: () => WoProjectsProjectIdRoute,
+  id: '/projects/$projectId/rsvp',
+  path: '/projects/$projectId/rsvp',
+  getParentRoute: () => WoRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -122,9 +123,9 @@ export interface FileRoutesByFullPath {
   '/wo/new': typeof WoNewRoute
   '/admin/': typeof AdminIndexRoute
   '/wo/': typeof WoIndexRoute
-  '/wo/projects/$projectId': typeof WoProjectsProjectIdRouteWithChildren
   '/wo/projects/$projectId/rsvp': typeof WoProjectsProjectIdRsvpRoute
   '/wo/projects/$projectId/wishes': typeof WoProjectsProjectIdWishesRoute
+  '/wo/projects/$projectId/': typeof WoProjectsProjectIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -138,9 +139,9 @@ export interface FileRoutesByTo {
   '/wo/new': typeof WoNewRoute
   '/admin': typeof AdminIndexRoute
   '/wo': typeof WoIndexRoute
-  '/wo/projects/$projectId': typeof WoProjectsProjectIdRouteWithChildren
   '/wo/projects/$projectId/rsvp': typeof WoProjectsProjectIdRsvpRoute
   '/wo/projects/$projectId/wishes': typeof WoProjectsProjectIdWishesRoute
+  '/wo/projects/$projectId': typeof WoProjectsProjectIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -157,9 +158,9 @@ export interface FileRoutesById {
   '/wo/new': typeof WoNewRoute
   '/admin/': typeof AdminIndexRoute
   '/wo/': typeof WoIndexRoute
-  '/wo/projects/$projectId': typeof WoProjectsProjectIdRouteWithChildren
   '/wo/projects/$projectId/rsvp': typeof WoProjectsProjectIdRsvpRoute
   '/wo/projects/$projectId/wishes': typeof WoProjectsProjectIdWishesRoute
+  '/wo/projects/$projectId/': typeof WoProjectsProjectIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -177,9 +178,9 @@ export interface FileRouteTypes {
     | '/wo/new'
     | '/admin/'
     | '/wo/'
-    | '/wo/projects/$projectId'
     | '/wo/projects/$projectId/rsvp'
     | '/wo/projects/$projectId/wishes'
+    | '/wo/projects/$projectId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -193,9 +194,9 @@ export interface FileRouteTypes {
     | '/wo/new'
     | '/admin'
     | '/wo'
-    | '/wo/projects/$projectId'
     | '/wo/projects/$projectId/rsvp'
     | '/wo/projects/$projectId/wishes'
+    | '/wo/projects/$projectId'
   id:
     | '__root__'
     | '/'
@@ -211,9 +212,9 @@ export interface FileRouteTypes {
     | '/wo/new'
     | '/admin/'
     | '/wo/'
-    | '/wo/projects/$projectId'
     | '/wo/projects/$projectId/rsvp'
     | '/wo/projects/$projectId/wishes'
+    | '/wo/projects/$projectId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -318,26 +319,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProjectsRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/wo/projects/$projectId': {
-      id: '/wo/projects/$projectId'
+    '/wo/projects/$projectId/': {
+      id: '/wo/projects/$projectId/'
       path: '/projects/$projectId'
-      fullPath: '/wo/projects/$projectId'
-      preLoaderRoute: typeof WoProjectsProjectIdRouteImport
+      fullPath: '/wo/projects/$projectId/'
+      preLoaderRoute: typeof WoProjectsProjectIdIndexRouteImport
       parentRoute: typeof WoRoute
     }
     '/wo/projects/$projectId/wishes': {
       id: '/wo/projects/$projectId/wishes'
-      path: '/wishes'
+      path: '/projects/$projectId/wishes'
       fullPath: '/wo/projects/$projectId/wishes'
       preLoaderRoute: typeof WoProjectsProjectIdWishesRouteImport
-      parentRoute: typeof WoProjectsProjectIdRoute
+      parentRoute: typeof WoRoute
     }
     '/wo/projects/$projectId/rsvp': {
       id: '/wo/projects/$projectId/rsvp'
-      path: '/rsvp'
+      path: '/projects/$projectId/rsvp'
       fullPath: '/wo/projects/$projectId/rsvp'
       preLoaderRoute: typeof WoProjectsProjectIdRsvpRouteImport
-      parentRoute: typeof WoProjectsProjectIdRoute
+      parentRoute: typeof WoRoute
     }
   }
 }
@@ -360,29 +361,20 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
-interface WoProjectsProjectIdRouteChildren {
-  WoProjectsProjectIdRsvpRoute: typeof WoProjectsProjectIdRsvpRoute
-  WoProjectsProjectIdWishesRoute: typeof WoProjectsProjectIdWishesRoute
-}
-
-const WoProjectsProjectIdRouteChildren: WoProjectsProjectIdRouteChildren = {
-  WoProjectsProjectIdRsvpRoute: WoProjectsProjectIdRsvpRoute,
-  WoProjectsProjectIdWishesRoute: WoProjectsProjectIdWishesRoute,
-}
-
-const WoProjectsProjectIdRouteWithChildren =
-  WoProjectsProjectIdRoute._addFileChildren(WoProjectsProjectIdRouteChildren)
-
 interface WoRouteChildren {
   WoNewRoute: typeof WoNewRoute
   WoIndexRoute: typeof WoIndexRoute
-  WoProjectsProjectIdRoute: typeof WoProjectsProjectIdRouteWithChildren
+  WoProjectsProjectIdRsvpRoute: typeof WoProjectsProjectIdRsvpRoute
+  WoProjectsProjectIdWishesRoute: typeof WoProjectsProjectIdWishesRoute
+  WoProjectsProjectIdIndexRoute: typeof WoProjectsProjectIdIndexRoute
 }
 
 const WoRouteChildren: WoRouteChildren = {
   WoNewRoute: WoNewRoute,
   WoIndexRoute: WoIndexRoute,
-  WoProjectsProjectIdRoute: WoProjectsProjectIdRouteWithChildren,
+  WoProjectsProjectIdRsvpRoute: WoProjectsProjectIdRsvpRoute,
+  WoProjectsProjectIdWishesRoute: WoProjectsProjectIdWishesRoute,
+  WoProjectsProjectIdIndexRoute: WoProjectsProjectIdIndexRoute,
 }
 
 const WoRouteWithChildren = WoRoute._addFileChildren(WoRouteChildren)
