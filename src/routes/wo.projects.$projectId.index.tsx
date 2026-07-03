@@ -33,6 +33,7 @@ function ProjectEditor() {
   const { projectId } = Route.useParams();
   const navigate = useNavigate();
   const {
+    loading,
     getProject,
     updateProject,
     updateData,
@@ -43,6 +44,14 @@ function ProjectEditor() {
   } = useProjects();
   const project = getProject(projectId);
   const [tab, setTab] = useState<Tab>("ringkasan");
+
+  if (loading) {
+    return (
+      <div className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
+        Memuat proyek…
+      </div>
+    );
+  }
 
   if (!project) {
     return (

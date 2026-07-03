@@ -122,6 +122,14 @@ function AdminProjectsPage() {
                     </Link>{" "}
                     ·{" "}
                     <Link
+                      to="/wo/projects/$projectId/wishes"
+                      params={{ projectId: p.id }}
+                      className="underline"
+                    >
+                      Ucapan
+                    </Link>{" "}
+                    ·{" "}
+                    <Link
                       to="/u/$slug"
                       params={{ slug: p.slug }}
                       target="_blank"

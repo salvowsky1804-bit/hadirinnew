@@ -8,7 +8,7 @@ export const Route = createFileRoute("/wo/projects/$projectId/rsvp")({
 
 function RsvpPage() {
   const { projectId } = Route.useParams();
-  const { getProject } = useProjects();
+  const { getProject, loading } = useProjects();
   const project = getProject(projectId);
 
   const summary = useMemo(() => {
@@ -26,6 +26,14 @@ function RsvpPage() {
       { attending: 0, tentative: 0, not: 0, totalPax: 0 },
     );
   }, [project]);
+
+  if (loading) {
+    return (
+      <div className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
+        Memuat RSVP &amp; ucapan…
+      </div>
+    );
+  }
 
   if (!project) {
     return (
