@@ -45,6 +45,8 @@ interface Ctx {
   removeGuest: (id: string, guestId: string) => void;
   addRsvp: (id: string, r: Omit<RsvpEntry, "id" | "submittedAt">) => void;
   addWish: (id: string, w: Omit<WishEntry, "id" | "submittedAt">) => void;
+  setWishVisibility: (id: string, wishId: string, visible: boolean) => void;
+  removeWish: (id: string, wishId: string) => void;
 }
 
 const ProjectsCtx = createContext<Ctx | null>(null);
@@ -126,6 +128,7 @@ function wishRow(w: any): WishEntry {
     guestName: w.name,
     message: w.message,
     submittedAt: w.created_at,
+    visible: w.approved !== false,
   };
 }
 
