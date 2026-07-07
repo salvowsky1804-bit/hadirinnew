@@ -1,11 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { listTemplates } from "@/lib/template-registry";
 import {
   dummyDetectedNewTemplate,
   dummyTemplateActiveState,
 } from "@/data/dummy";
 import { useProjects } from "@/lib/projects-store";
+import {
+  fetchTemplateThumbnailMap,
+  uploadTemplateThumbnail,
+  clearTemplateThumbnail,
+} from "@/lib/template-thumbnails";
 
 export const Route = createFileRoute("/admin/templates")({
   component: TemplatesCatalog,
@@ -35,6 +40,52 @@ function TemplatesCatalog() {
   const [previewDevice, setPreviewDevice] = useState<"mobile" | "desktop">(
     "mobile",
   );
+  const [overrides, setOverrides] = useState<Record<string, string>>({});
+  const [busySlug, setBusySlug] = useState<string | null>(null);
+  const [uploadErr, setUploadErr] = useState<string | null>(null);
+  const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchTemplateThumbnailMap()
+      .then((m) => {
+        if (!cancelled) setOverrides(m);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  async function handleFile(slug: string, name: string, file: File) {
+    setBusySlug(slug);
+    setUploadErr(null);
+    try {
+      const url = await uploadTemplateThumbnail(slug, name, file);
+      setOverrides((s) => ({ ...s, [slug]: url }));
+    } catch (e) {
+      setUploadErr(e instanceof Error ? e.message : "Gagal mengunggah");
+    } finally {
+      setBusySlug(null);
+    }
+  }
+
+  async function handleReset(slug: string) {
+    setBusySlug(slug);
+    setUploadErr(null);
+    try {
+      await clearTemplateThumbnail(slug);
+      setOverrides((s) => {
+        const n = { ...s };
+        delete n[slug];
+        return n;
+      });
+    } catch (e) {
+      setUploadErr(e instanceof Error ? e.message : "Gagal menghapus");
+    } finally {
+      setBusySlug(null);
+    }
+  }
 
   useEffect(() => {
     if (!previewSlug) return;
@@ -113,6 +164,9 @@ function TemplatesCatalog() {
         {templates.map(({ manifest }) => {
           const isActive = active[manifest.slug] ?? true;
           const used = usageCount(manifest.slug);
+          const overrideUrl = overrides[manifest.slug];
+          const thumbSrc = overrideUrl ?? manifest.thumbnail;
+          const busy = busySlug === manifest.slug;
           return (
             <article
               key={manifest.slug}
@@ -120,7 +174,7 @@ function TemplatesCatalog() {
             >
               <div className="relative aspect-[4/5] overflow-hidden bg-muted">
                 <img
-                  src={manifest.thumbnail}
+                  src={thumbSrc}
                   alt={manifest.name}
                   loading="lazy"
                   className="h-full w-full object-cover"
@@ -134,6 +188,43 @@ function TemplatesCatalog() {
                 >
                   {isActive ? "Aktif" : "Nonaktif"}
                 </span>
+                {overrideUrl && (
+                  <span className="absolute right-3 top-3 rounded-full bg-black/60 px-2.5 py-0.5 text-[10px] uppercase tracking-widest text-white">
+                    Kustom
+                  </span>
+                )}
+                <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-black/70 to-transparent p-3 text-[11px] uppercase tracking-widest text-white">
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => fileRefs.current[manifest.slug]?.click()}
+                    className="rounded-md border border-white/30 bg-white/10 px-2.5 py-1 backdrop-blur hover:bg-white/20 disabled:opacity-50"
+                  >
+                    {busy ? "Mengunggah…" : overrideUrl ? "Ganti" : "Unggah"}
+                  </button>
+                  {overrideUrl && !busy && (
+                    <button
+                      type="button"
+                      onClick={() => handleReset(manifest.slug)}
+                      className="rounded-md border border-white/30 bg-white/10 px-2.5 py-1 backdrop-blur hover:bg-white/20"
+                    >
+                      Reset
+                    </button>
+                  )}
+                  <input
+                    ref={(el) => {
+                      fileRefs.current[manifest.slug] = el;
+                    }}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) handleFile(manifest.slug, manifest.name, f);
+                      e.target.value = "";
+                    }}
+                  />
+                </div>
               </div>
               <div className="space-y-3 p-4">
                 <div>
