@@ -30,8 +30,7 @@ function AdminProjectsPage() {
         <div>
           <h2 className="font-serif text-2xl">Semua Proyek</h2>
           <p className="text-xs text-muted-foreground">
-            Menampilkan seluruh proyek studio (semua WO). Total{" "}
-            {projects.length}.
+            Menampilkan seluruh proyek studio (semua WO). Total {projects.length}.
           </p>
         </div>
         <div className="flex gap-2 text-xs">
@@ -56,9 +55,9 @@ function AdminProjectsPage() {
       {loading ? (
         <p className="text-sm text-muted-foreground">Memuat…</p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-border">
+        <div className="sp-card overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-muted/40 text-left text-xs uppercase text-muted-foreground">
+            <thead className="border-b border-border bg-muted/50 text-left text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
               <tr>
                 <th className="px-3 py-2">Pasangan</th>
                 <th className="px-3 py-2">Slug</th>
@@ -73,10 +72,7 @@ function AdminProjectsPage() {
             <tbody>
               {rows.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={8}
-                    className="px-3 py-6 text-center text-muted-foreground"
-                  >
+                  <td colSpan={8} className="px-3 py-6 text-center text-muted-foreground">
                     Tidak ada proyek.
                   </td>
                 </tr>
@@ -85,56 +81,29 @@ function AdminProjectsPage() {
                 <tr key={p.id} className="border-t border-border">
                   <td className="px-3 py-2 font-medium">{p.coupleLabel}</td>
                   <td className="px-3 py-2 text-muted-foreground">/u/{p.slug}</td>
-                  <td className="px-3 py-2 text-muted-foreground">
-                    {p.templateSlug}
-                  </td>
-                  <td className="px-3 py-2 text-muted-foreground">
-                    {p.eventDate || "—"}
-                  </td>
+                  <td className="px-3 py-2 text-muted-foreground">{p.templateSlug}</td>
+                  <td className="px-3 py-2 text-muted-foreground">{p.eventDate || "—"}</td>
                   <td className="px-3 py-2">
-                    <span
-                      className={
-                        p.status === "published"
-                          ? "text-emerald-700"
-                          : "text-amber-700"
-                      }
-                    >
+                    <span className={`sp-badge ${p.status === "published" ? "sp-badge-ok" : "sp-badge-draft"}`}>
                       {p.status === "published" ? "Terbit" : "Draft"}
                     </span>
                   </td>
                   <td className="px-3 py-2">{p.guests.length}</td>
                   <td className="px-3 py-2">{p.rsvps.length}</td>
                   <td className="px-3 py-2 text-right text-xs">
-                    <Link
-                      to="/wo/projects/$projectId"
-                      params={{ projectId: p.id }}
-                      className="underline"
-                    >
+                    <Link to="/wo/projects/$projectId" params={{ projectId: p.id }} className="underline">
                       Editor
                     </Link>{" "}
                     ·{" "}
-                    <Link
-                      to="/wo/projects/$projectId/rsvp"
-                      params={{ projectId: p.id }}
-                      className="underline"
-                    >
+                    <Link to="/wo/projects/$projectId/rsvp" params={{ projectId: p.id }} className="underline">
                       RSVP
                     </Link>{" "}
                     ·{" "}
-                    <Link
-                      to="/wo/projects/$projectId/wishes"
-                      params={{ projectId: p.id }}
-                      className="underline"
-                    >
+                    <Link to="/wo/projects/$projectId/wishes" params={{ projectId: p.id }} className="underline">
                       Ucapan
                     </Link>{" "}
                     ·{" "}
-                    <Link
-                      to="/u/$slug"
-                      params={{ slug: p.slug }}
-                      target="_blank"
-                      className="underline"
-                    >
+                    <Link to="/u/$slug" params={{ slug: p.slug }} target="_blank" className="underline">
                       Preview ↗
                     </Link>
                   </td>
