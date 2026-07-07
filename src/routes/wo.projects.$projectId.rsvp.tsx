@@ -12,8 +12,7 @@ function RsvpPage() {
   const project = getProject(projectId);
 
   const summary = useMemo(() => {
-    if (!project)
-      return { attending: 0, tentative: 0, not: 0, totalPax: 0 };
+    if (!project) return { attending: 0, tentative: 0, not: 0, totalPax: 0 };
     return project.rsvps.reduce(
       (acc, r) => {
         if (r.status === "attending") {
@@ -72,17 +71,17 @@ function RsvpPage() {
       </header>
 
       <div className="grid gap-3 sm:grid-cols-4">
-        <Stat label="Hadir" value={summary.attending} tone="emerald" />
-        <Stat label="Mungkin" value={summary.tentative} tone="amber" />
-        <Stat label="Tidak Hadir" value={summary.not} tone="rose" />
+        <Stat label="Hadir" value={summary.attending} tone="ok" />
+        <Stat label="Mungkin" value={summary.tentative} tone="draft" />
+        <Stat label="Tidak Hadir" value={summary.not} tone="wine" />
         <Stat label="Total Pax" value={summary.totalPax} />
       </div>
 
       <section>
         <h3 className="mb-3 font-medium">Konfirmasi Tamu</h3>
-        <div className="overflow-x-auto rounded-lg border border-border">
+        <div className="sp-card overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-muted/40 text-left text-xs uppercase text-muted-foreground">
+            <thead className="border-b border-border bg-muted/50 text-left text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
               <tr>
                 <th className="px-3 py-2">Tamu</th>
                 <th className="px-3 py-2">Status</th>
@@ -124,11 +123,10 @@ function RsvpPage() {
             </li>
           ) : null}
           {project.wishes.map((w) => (
-            <li key={w.id} className="rounded-lg border border-border bg-card p-4">
+            <li key={w.id} className="sp-card p-4">
               <p className="text-sm">{w.message}</p>
               <p className="mt-2 text-xs text-muted-foreground">
-                — {w.guestName} ·{" "}
-                {new Date(w.submittedAt).toLocaleDateString("id-ID")}
+                — {w.guestName} · {new Date(w.submittedAt).toLocaleDateString("id-ID")}
               </p>
             </li>
           ))}
@@ -138,42 +136,28 @@ function RsvpPage() {
   );
 }
 
-function Stat({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: number;
-  tone?: "emerald" | "amber" | "rose";
-}) {
+function Stat({ label, value, tone }: { label: string; value: number; tone?: "ok" | "draft" | "wine" }) {
   const toneClass =
-    tone === "emerald"
-      ? "text-emerald-700"
-      : tone === "amber"
-        ? "text-amber-700"
-        : tone === "rose"
-          ? "text-rose-700"
+    tone === "ok"
+      ? "text-[oklch(0.4_0.055_150)]"
+      : tone === "draft"
+        ? "text-[oklch(0.47_0.05_62)]"
+        : tone === "wine"
+          ? "text-bordeaux"
           : "text-foreground";
   return (
-    <div className="rounded-lg border border-border bg-card p-4">
-      <p className="text-xs uppercase tracking-widest text-muted-foreground">
-        {label}
-      </p>
-      <p className={`mt-1 font-serif text-3xl ${toneClass}`}>{value}</p>
+    <div className="sp-card p-4">
+      <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground">{label}</p>
+      <p className={`mt-1 font-serif text-4xl leading-none ${toneClass}`}>{value}</p>
     </div>
   );
 }
 
 function StatusPill({ status }: { status: "attending" | "tentative" | "not_attending" }) {
   const map = {
-    attending: { l: "Hadir", c: "bg-emerald-100 text-emerald-900" },
-    tentative: { l: "Mungkin", c: "bg-amber-100 text-amber-900" },
-    not_attending: { l: "Tidak", c: "bg-rose-100 text-rose-900" },
+    attending: { l: "Hadir", c: "sp-badge-ok" },
+    tentative: { l: "Mungkin", c: "sp-badge-draft" },
+    not_attending: { l: "Tidak", c: "sp-badge-wine" },
   } as const;
-  return (
-    <span className={`rounded-full px-2 py-0.5 text-xs ${map[status].c}`}>
-      {map[status].l}
-    </span>
-  );
+  return <span className={`sp-badge ${map[status].c}`}>{map[status].l}</span>;
 }
