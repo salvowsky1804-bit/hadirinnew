@@ -51,19 +51,16 @@ function SettingsPage() {
     setSaved(true);
   };
 
-  const set = <K extends keyof StudioSettings>(k: K, v: StudioSettings[K]) =>
-    setSettings((s) => ({ ...s, [k]: v }));
+  const set = <K extends keyof StudioSettings>(k: K, v: StudioSettings[K]) => setSettings((s) => ({ ...s, [k]: v }));
 
   const inputCls =
     "w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-foreground focus:outline-none";
 
   return (
     <form onSubmit={save} className="max-w-2xl space-y-8">
-      <section className="rounded-lg border border-border bg-card p-5">
+      <section className="sp-card p-5">
         <h3 className="font-serif text-lg">Identitas Studio</h3>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Muncul di footer undangan & email koordinasi.
-        </p>
+        <p className="mt-1 text-xs text-muted-foreground">Muncul di footer undangan & email koordinasi.</p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <Field label="Nama Studio">
             <input
@@ -100,7 +97,7 @@ function SettingsPage() {
         </div>
       </section>
 
-      <section className="rounded-lg border border-border bg-card p-5">
+      <section className="sp-card p-5">
         <h3 className="font-serif text-lg">Preferensi Tampilan Tamu</h3>
         <div className="mt-4 space-y-3">
           <Toggle
@@ -116,11 +113,10 @@ function SettingsPage() {
         </div>
       </section>
 
-      <section className="rounded-lg border border-red-200 bg-red-50 p-5">
-        <h3 className="font-serif text-lg text-red-900">Zona Berbahaya</h3>
-        <p className="mt-1 text-xs text-red-800">
-          Reset penyimpanan lokal akan menghapus semua proyek yang dibuat di
-          browser ini.
+      <section className="rounded-lg border border-destructive/30 bg-destructive/5 p-5">
+        <h3 className="font-serif text-lg text-destructive">Zona Berbahaya</h3>
+        <p className="mt-1 text-xs text-destructive/80">
+          Reset penyimpanan lokal akan menghapus semua proyek yang dibuat di browser ini.
         </p>
         <button
           type="button"
@@ -129,53 +125,32 @@ function SettingsPage() {
             resetProjectsStorage();
             window.location.reload();
           }}
-          className="mt-3 rounded-md border border-red-400 px-3 py-1.5 text-xs uppercase tracking-widest text-red-900 hover:bg-red-100"
+          className="mt-3 rounded-md border border-destructive/50 px-3 py-1.5 text-xs uppercase tracking-[0.12em] text-destructive transition hover:bg-destructive/10"
         >
           Reset data proyek
         </button>
       </section>
 
       <div className="flex items-center gap-3">
-        <button
-          type="submit"
-          className="rounded-md bg-foreground px-5 py-2 text-sm text-background hover:opacity-90"
-        >
+        <button type="submit" className="rounded-md bg-foreground px-5 py-2 text-sm text-background hover:opacity-90">
           Simpan Perubahan
         </button>
-        {saved && (
-          <span className="text-sm text-emerald-700">Tersimpan ✓</span>
-        )}
+        {saved && <span className="text-sm text-[oklch(0.4_0.055_150)]">Tersimpan ✓</span>}
       </div>
     </form>
   );
 }
 
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
-        {label}
-      </span>
+      <span className="mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">{label}</span>
       {children}
     </label>
   );
 }
 
-function Toggle({
-  label,
-  checked,
-  onChange,
-}: {
-  label: string;
-  checked: boolean;
-  onChange: (v: boolean) => void;
-}) {
+function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
   return (
     <label className="flex items-center justify-between gap-3 rounded-md border border-border px-3 py-2 text-sm">
       <span>{label}</span>
@@ -184,9 +159,7 @@ function Toggle({
         role="switch"
         aria-checked={checked}
         onClick={() => onChange(!checked)}
-        className={`relative h-6 w-11 shrink-0 rounded-full transition ${
-          checked ? "bg-foreground" : "bg-muted"
-        }`}
+        className={`relative h-6 w-11 shrink-0 rounded-full transition ${checked ? "bg-foreground" : "bg-muted"}`}
       >
         <span
           className={`absolute top-0.5 h-5 w-5 rounded-full bg-background transition ${
