@@ -161,6 +161,11 @@ function TemplatesCatalog() {
       )}
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {uploadErr && (
+          <div className="col-span-full rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+            {uploadErr}
+          </div>
+        )}
         {templates.map(({ manifest }) => {
           const isActive = active[manifest.slug] ?? true;
           const used = usageCount(manifest.slug);
