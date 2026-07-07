@@ -2,12 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import {
-  addWoMember,
-  listWoMembers,
-  removeWoMember,
-  setWoMemberActive,
-} from "@/lib/team.functions";
+import { addWoMember, listWoMembers, removeWoMember, setWoMemberActive } from "@/lib/team.functions";
 
 export const Route = createFileRoute("/admin/team")({
   component: TeamPage,
@@ -20,7 +15,11 @@ function TeamPage() {
   const toggleFn = useServerFn(setWoMemberActive);
   const removeFn = useServerFn(removeWoMember);
 
-  const { data: team = [], isLoading, error } = useQuery({
+  const {
+    data: team = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["admin", "wo-team"],
     queryFn: () => listFn(),
   });
@@ -31,16 +30,10 @@ function TeamPage() {
   const [phone, setPhone] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
 
-  const invalidate = () =>
-    qc.invalidateQueries({ queryKey: ["admin", "wo-team"] });
+  const invalidate = () => qc.invalidateQueries({ queryKey: ["admin", "wo-team"] });
 
   const addMut = useMutation({
-    mutationFn: (vars: {
-      fullName: string;
-      email: string;
-      password: string;
-      phone?: string;
-    }) => addFn({ data: vars }),
+    mutationFn: (vars: { fullName: string; email: string; password: string; phone?: string }) => addFn({ data: vars }),
     onSuccess: () => {
       setName("");
       setEmail("");
@@ -53,8 +46,7 @@ function TeamPage() {
   });
 
   const toggleMut = useMutation({
-    mutationFn: (vars: { id: string; active: boolean }) =>
-      toggleFn({ data: vars }),
+    mutationFn: (vars: { id: string; active: boolean }) => toggleFn({ data: vars }),
     onSuccess: invalidate,
   });
 
@@ -77,8 +69,7 @@ function TeamPage() {
     });
   };
 
-  const toggle = (id: string, active: boolean) =>
-    toggleMut.mutate({ id, active: !active });
+  const toggle = (id: string, active: boolean) => toggleMut.mutate({ id, active: !active });
 
   const remove = (id: string) => {
     if (!confirm("Hapus akun WO ini?")) return;
@@ -90,10 +81,7 @@ function TeamPage() {
 
   return (
     <section className="space-y-6">
-      <form
-        onSubmit={add}
-        className="rounded-lg border border-border bg-card p-4"
-      >
+      <form onSubmit={add} className="sp-card p-5">
         <h3 className="font-serif text-lg">Tambah Akun WO</h3>
         <p className="mt-1 text-xs text-muted-foreground">
           Akun dibuat di Supabase Auth dan langsung dapat login dengan peran WO.
@@ -130,9 +118,7 @@ function TeamPage() {
             className={inputCls}
           />
         </div>
-        {formError && (
-          <p className="mt-3 text-xs text-red-700">{formError}</p>
-        )}
+        {formError && <p className="mt-3 text-xs text-destructive">{formError}</p>}
         <div className="mt-3 flex justify-end">
           <button
             type="submit"
@@ -144,9 +130,9 @@ function TeamPage() {
         </div>
       </form>
 
-      <div className="overflow-hidden rounded-lg border border-border bg-card">
+      <div className="sp-card overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="border-b border-border bg-muted/40 text-left text-[11px] uppercase tracking-widest text-muted-foreground">
+          <thead className="border-b border-border bg-muted/50 text-left text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
             <tr>
               <th className="px-4 py-3">Nama</th>
               <th className="px-4 py-3">Email</th>
@@ -161,18 +147,10 @@ function TeamPage() {
               <tr key={m.id}>
                 <td className="px-4 py-3 font-medium">{m.name}</td>
                 <td className="px-4 py-3 text-muted-foreground">{m.email}</td>
-                <td className="px-4 py-3 text-muted-foreground">
-                  {new Date(m.joinedAt).toLocaleDateString("id-ID")}
-                </td>
+                <td className="px-4 py-3 text-muted-foreground">{new Date(m.joinedAt).toLocaleDateString("id-ID")}</td>
                 <td className="px-4 py-3 text-center">{m.projectCount}</td>
                 <td className="px-4 py-3 text-center">
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-[11px] uppercase tracking-widest ${
-                      m.active
-                        ? "bg-emerald-100 text-emerald-900"
-                        : "bg-muted text-muted-foreground"
-                    }`}
-                  >
+                  <span className={`sp-badge ${m.active ? "sp-badge-ok" : "sp-badge-muted"}`}>
                     {m.active ? "Aktif" : "Nonaktif"}
                   </span>
                 </td>
@@ -187,7 +165,7 @@ function TeamPage() {
                   <button
                     onClick={() => remove(m.id)}
                     disabled={removeMut.isPending}
-                    className="text-xs uppercase tracking-widest text-red-700 hover:text-red-900"
+                    className="text-xs uppercase tracking-[0.12em] text-destructive transition hover:opacity-70"
                   >
                     Hapus
                   </button>
@@ -196,10 +174,7 @@ function TeamPage() {
             ))}
             {team.length === 0 && !isLoading && (
               <tr>
-                <td
-                  colSpan={6}
-                  className="px-4 py-8 text-center text-sm text-muted-foreground"
-                >
+                <td colSpan={6} className="px-4 py-8 text-center text-sm text-muted-foreground">
                   Belum ada akun WO. Tambahkan dari form di atas.
                 </td>
               </tr>
@@ -213,7 +188,7 @@ function TeamPage() {
             )}
             {error && (
               <tr>
-                <td colSpan={6} className="px-4 py-6 text-center text-sm text-red-700">
+                <td colSpan={6} className="px-4 py-6 text-center text-sm text-destructive">
                   Gagal memuat: {(error as Error).message}
                 </td>
               </tr>
