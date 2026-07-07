@@ -29,9 +29,7 @@ function NewProjectPage() {
 
   const [coupleLabel, setCoupleLabel] = useState("");
   const [slug, setSlug] = useState("");
-  const [templateSlug, setTemplateSlug] = useState(
-    templates[0]?.manifest.slug ?? "",
-  );
+  const [templateSlug, setTemplateSlug] = useState(templates[0]?.manifest.slug ?? "");
   const [eventDate, setEventDate] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -76,8 +74,7 @@ function NewProjectPage() {
       <header>
         <h2 className="font-serif text-xl">Proyek Undangan Baru</h2>
         <p className="text-sm text-muted-foreground">
-          Isi data dasar dan pilih template. Detail lanjutan dapat diatur di
-          editor.
+          Isi data dasar dan pilih template. Detail lanjutan dapat diatur di editor.
         </p>
       </header>
 
@@ -91,10 +88,7 @@ function NewProjectPage() {
           placeholder="Rama & Sinta"
         />
       </Field>
-      <Field
-        label="Slug URL"
-        hint={`Undangan akan diakses di /u/${slug || "..."}`}
-      >
+      <Field label="Slug URL" hint={`Undangan akan diakses di /u/${slug || "..."}`}>
         <input
           required
           value={slug}
@@ -124,7 +118,7 @@ function NewProjectPage() {
                 key={t.manifest.slug}
                 className={`cursor-pointer rounded-lg border p-4 transition ${
                   active
-                    ? "border-foreground bg-muted"
+                    ? "border-bordeaux bg-cream ring-1 ring-bordeaux/30"
                     : "border-border hover:border-foreground/40"
                 }`}
               >
@@ -142,13 +136,9 @@ function NewProjectPage() {
                     {t.manifest.internalPackage}
                   </span>
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {t.manifest.tagline}
-                </p>
+                <p className="mt-1 text-xs text-muted-foreground">{t.manifest.tagline}</p>
                 {t.manifest.fields.length > 0 ? (
-                  <p className="mt-2 text-[11px] text-muted-foreground">
-                    +{t.manifest.fields.length} field custom
-                  </p>
+                  <p className="mt-2 text-[11px] text-muted-foreground">+{t.manifest.fields.length} field custom</p>
                 ) : null}
               </label>
             );
@@ -183,15 +173,7 @@ function NewProjectPage() {
   );
 }
 
-function Field({
-  label,
-  hint,
-  children,
-}: {
-  label: string;
-  hint?: string;
-  children: React.ReactNode;
-}) {
+function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
     <label className="block space-y-1.5">
       <span className="text-sm font-medium">{label}</span>
