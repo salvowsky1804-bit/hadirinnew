@@ -19,37 +19,19 @@ export const Route = createFileRoute("/wo/projects/$projectId/")({
   component: ProjectEditor,
 });
 
-type Tab =
-  | "ringkasan"
-  | "pasangan"
-  | "acara"
-  | "kisah"
-  | "galeri"
-  | "hadiah"
-  | "custom"
-  | "tamu";
+type Tab = "ringkasan" | "pasangan" | "acara" | "kisah" | "galeri" | "hadiah" | "custom" | "tamu";
 
 function ProjectEditor() {
   const { projectId } = Route.useParams();
   const navigate = useNavigate();
-  const {
-    loading,
-    getProject,
-    updateProject,
-    updateData,
-    removeProject,
-    addGuest,
-    removeGuest,
-    updateGuest,
-  } = useProjects();
+  const { loading, getProject, updateProject, updateData, removeProject, addGuest, removeGuest, updateGuest } =
+    useProjects();
   const project = getProject(projectId);
   const [tab, setTab] = useState<Tab>("ringkasan");
 
   if (loading) {
     return (
-      <div className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
-        Memuat proyek…
-      </div>
+      <div className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">Memuat proyek…</div>
     );
   }
 
@@ -74,9 +56,7 @@ function ProjectEditor() {
     { id: "kisah", label: "Kisah" },
     { id: "galeri", label: "Galeri" },
     { id: "hadiah", label: "Hadiah" },
-    ...(customFields.length > 0
-      ? ([{ id: "custom" as Tab, label: `Custom (${customFields.length})` }] as const)
-      : []),
+    ...(customFields.length > 0 ? ([{ id: "custom" as Tab, label: `Custom (${customFields.length})` }] as const) : []),
     { id: "tamu", label: `Tamu (${project.guests.length})` },
   ];
 
@@ -99,14 +79,9 @@ function ProjectEditor() {
         <div>
           <h2 className="font-serif text-2xl">{project.coupleLabel}</h2>
           <p className="text-xs text-muted-foreground">
-            Template <strong>{project.templateSlug}</strong> · /u/{project.slug}{" "}
-            ·{" "}
+            Template <strong>{project.templateSlug}</strong> · /u/{project.slug} ·{" "}
             <span
-              className={
-                project.status === "published"
-                  ? "text-emerald-700"
-                  : "text-amber-700"
-              }
+              className={`sp-badge align-middle ${project.status === "published" ? "sp-badge-ok" : "sp-badge-draft"}`}
             >
               {project.status === "published" ? "Terbit" : "Draft"}
             </span>
@@ -146,10 +121,7 @@ function ProjectEditor() {
         </div>
       </header>
 
-      <nav
-        aria-label="Bagian editor"
-        className="flex flex-wrap gap-1 border-b border-border"
-      >
+      <nav aria-label="Bagian editor" className="flex flex-wrap gap-1 border-b border-border">
         {tabs.map((t) => (
           <button
             key={t.id}
@@ -157,7 +129,7 @@ function ProjectEditor() {
             onClick={() => setTab(t.id)}
             className={`-mb-px border-b-2 px-3 py-2 text-sm transition ${
               tab === t.id
-                ? "border-foreground font-medium text-foreground"
+                ? "border-bordeaux font-medium text-foreground"
                 : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -175,43 +147,16 @@ function ProjectEditor() {
           />
         )}
         {tab === "pasangan" && (
-          <CoupleTab
-            projectId={project.id}
-            data={project.data}
-            onChange={(d) => updateData(project.id, () => d)}
-          />
+          <CoupleTab projectId={project.id} data={project.data} onChange={(d) => updateData(project.id, () => d)} />
         )}
-        {tab === "acara" && (
-          <EventsTab
-            data={project.data}
-            onChange={(d) => updateData(project.id, () => d)}
-          />
-        )}
-        {tab === "kisah" && (
-          <StoryTab
-            data={project.data}
-            onChange={(d) => updateData(project.id, () => d)}
-          />
-        )}
+        {tab === "acara" && <EventsTab data={project.data} onChange={(d) => updateData(project.id, () => d)} />}
+        {tab === "kisah" && <StoryTab data={project.data} onChange={(d) => updateData(project.id, () => d)} />}
         {tab === "galeri" && (
-          <GalleryTab
-            projectId={project.id}
-            data={project.data}
-            onChange={(d) => updateData(project.id, () => d)}
-          />
+          <GalleryTab projectId={project.id} data={project.data} onChange={(d) => updateData(project.id, () => d)} />
         )}
-        {tab === "hadiah" && (
-          <GiftsTab
-            data={project.data}
-            onChange={(d) => updateData(project.id, () => d)}
-          />
-        )}
+        {tab === "hadiah" && <GiftsTab data={project.data} onChange={(d) => updateData(project.id, () => d)} />}
         {tab === "custom" && customFields.length > 0 && (
-          <CustomTab
-            fields={customFields}
-            data={project.data}
-            onChange={(d) => updateData(project.id, () => d)}
-          />
+          <CustomTab fields={customFields} data={project.data} onChange={(d) => updateData(project.id, () => d)} />
         )}
         {tab === "tamu" && (
           <GuestsTab
@@ -290,9 +235,7 @@ function SummaryTab({
           onChange={(e) => onChange({ slug: slugify(e.target.value) })}
           maxLength={60}
         />
-        <span className="mt-1 block text-xs text-muted-foreground">
-          Undangan: /u/{project.slug}
-        </span>
+        <span className="mt-1 block text-xs text-muted-foreground">Undangan: /u/{project.slug}</span>
       </label>
 
       <fieldset className="space-y-3 rounded-lg border border-border p-4">
@@ -355,15 +298,11 @@ function SummaryTab({
             <input
               className="input"
               value={settings.musicUrl ?? ""}
-              onChange={(e) =>
-                updateSettings({ musicUrl: e.target.value || undefined })
-              }
+              onChange={(e) => updateSettings({ musicUrl: e.target.value || undefined })}
               placeholder="https://..."
             />
           </label>
-          {musicErr ? (
-            <p className="mt-1 text-xs text-destructive">{musicErr}</p>
-          ) : null}
+          {musicErr ? <p className="mt-1 text-xs text-destructive">{musicErr}</p> : null}
         </div>
       </fieldset>
 
@@ -399,14 +338,8 @@ function CoupleTab({
     <div className="grid gap-6 md:grid-cols-2">
       {(["groom", "bride"] as const).map((k) => (
         <fieldset key={k} className="space-y-3 rounded-lg border border-border p-4">
-          <legend className="px-1 font-serif text-lg">
-            {k === "groom" ? "Mempelai Pria" : "Mempelai Wanita"}
-          </legend>
-          <PersonField
-            projectId={projectId}
-            person={data[k]}
-            onChange={(patch) => update(k, patch)}
-          />
+          <legend className="px-1 font-serif text-lg">{k === "groom" ? "Mempelai Pria" : "Mempelai Wanita"}</legend>
+          <PersonField projectId={projectId} person={data[k]} onChange={(patch) => update(k, patch)} />
         </fieldset>
       ))}
     </div>
@@ -485,13 +418,7 @@ function PersonField({
   );
 }
 
-function EventsTab({
-  data,
-  onChange,
-}: {
-  data: InvitationData;
-  onChange: (d: InvitationData) => void;
-}) {
+function EventsTab({ data, onChange }: { data: InvitationData; onChange: (d: InvitationData) => void }) {
   const set = (events: InvitationEvent[]) => onChange({ ...data, events });
   const blank = (): InvitationEvent => ({
     id: `e_${Math.random().toString(36).slice(2, 8)}`,
@@ -610,13 +537,7 @@ function EventsTab({
   );
 }
 
-function StoryTab({
-  data,
-  onChange,
-}: {
-  data: InvitationData;
-  onChange: (d: InvitationData) => void;
-}) {
+function StoryTab({ data, onChange }: { data: InvitationData; onChange: (d: InvitationData) => void }) {
   const set = (loveStory: LoveStoryMoment[]) => onChange({ ...data, loveStory });
   const blank = (): LoveStoryMoment => ({
     id: `ls_${Math.random().toString(36).slice(2, 8)}`,
@@ -734,13 +655,7 @@ function GalleryTab({
   );
 }
 
-function GiftsTab({
-  data,
-  onChange,
-}: {
-  data: InvitationData;
-  onChange: (d: InvitationData) => void;
-}) {
+function GiftsTab({ data, onChange }: { data: InvitationData; onChange: (d: InvitationData) => void }) {
   const set = (gifts: GiftAccount[]) => onChange({ ...data, gifts });
   const blank = (): GiftAccount => ({
     id: `gi_${Math.random().toString(36).slice(2, 8)}`,
@@ -829,13 +744,10 @@ function CustomTab({
   data: InvitationData;
   onChange: (d: InvitationData) => void;
 }) {
-  const setVal = (id: string, value: unknown) =>
-    onChange({ ...data, custom: { ...data.custom, [id]: value } });
+  const setVal = (id: string, value: unknown) => onChange({ ...data, custom: { ...data.custom, [id]: value } });
   return (
     <div className="space-y-4">
-      <p className="text-xs text-muted-foreground">
-        Field di bawah dideklarasikan oleh manifest template.
-      </p>
+      <p className="text-xs text-muted-foreground">Field di bawah dideklarasikan oleh manifest template.</p>
       {fields.map((f) => {
         const val = (data.custom[f.id] as string | undefined) ?? "";
         return (
@@ -861,11 +773,7 @@ function CustomTab({
                 onChange={(e) => setVal(f.id, e.target.value)}
               />
             )}
-            {f.help ? (
-              <span className="mt-1 block text-xs text-muted-foreground">
-                {f.help}
-              </span>
-            ) : null}
+            {f.help ? <span className="mt-1 block text-xs text-muted-foreground">{f.help}</span> : null}
           </label>
         );
       })}
@@ -914,13 +822,7 @@ function GuestsTab({
         <Row>
           <label className="md:col-span-2">
             <span className="lbl">Nama / Keluarga</span>
-            <input
-              className="input"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              maxLength={80}
-              required
-            />
+            <input className="input" value={name} onChange={(e) => setName(e.target.value)} maxLength={80} required />
           </label>
           <label>
             <span className="lbl">Grup</span>
@@ -989,18 +891,11 @@ function GuestsTab({
                       projectId={project.id}
                       guestId={g.id}
                       qrPath={g.qr}
-                      onChange={(path) =>
-                        onUpdate(g.id, { qr: path } as Partial<Guest>)
-                      }
+                      onChange={(path) => onUpdate(g.id, { qr: path } as Partial<Guest>)}
                     />
                   </td>
                   <td className="px-3 py-2">
-                    <a
-                      href={url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-xs underline"
-                    >
+                    <a href={url} target="_blank" rel="noreferrer" className="text-xs underline">
                       buka ↗
                     </a>{" "}
                     <button
@@ -1084,12 +979,7 @@ function GuestQrCell({
   return (
     <div className="flex items-center gap-2">
       {preview ? (
-        <img
-          src={preview}
-          alt="QR"
-          className="h-12 w-12 rounded border border-border object-contain"
-          loading="lazy"
-        />
+        <img src={preview} alt="QR" className="h-12 w-12 rounded border border-border object-contain" loading="lazy" />
       ) : (
         <div className="grid h-12 w-12 place-items-center rounded border border-dashed border-border text-[10px] text-muted-foreground">
           QR
@@ -1136,16 +1026,9 @@ function RepeaterList<T extends { id: string }>({
         </p>
       ) : null}
       {items.map((it, idx) => (
-        <div
-          key={it.id}
-          className="space-y-3 rounded-lg border border-border bg-card p-4"
-        >
+        <div key={it.id} className="space-y-3 rounded-lg border border-border bg-card p-4">
           {renderItem(it, idx)}
-          <button
-            type="button"
-            onClick={() => onRemove(idx)}
-            className="text-xs text-destructive hover:underline"
-          >
+          <button type="button" onClick={() => onRemove(idx)} className="text-xs text-destructive hover:underline">
             Hapus
           </button>
         </div>
