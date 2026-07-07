@@ -737,6 +737,7 @@ function Showcase() {
   ];
   const [previewSlug, setPreviewSlug] = useState<string | null>(null);
   const [previewDevice, setPreviewDevice] = useState<"mobile" | "desktop">("desktop");
+  const thumbs = useTemplateThumbnails();
   useEffect(() => {
     if (!previewSlug) return;
     const prev = document.body.style.overflow;
@@ -785,20 +786,35 @@ function Showcase() {
                 <div
                   className={`relative flex aspect-[4/5] flex-col items-center justify-center bg-gradient-to-br ${c.tone} p-10 text-center`}
                 >
+                  {thumbs[c.slug] && (
+                    <>
+                      <img
+                        src={thumbs[c.slug]}
+                        alt={`Thumbnail template ${c.name}`}
+                        loading="lazy"
+                        decoding="async"
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div
+                        aria-hidden
+                        className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/10"
+                      />
+                    </>
+                  )}
                   <p className={`text-[10px] uppercase tracking-[0.45em] ${c.dark ? "text-gilded" : "text-stone"}`}>
                     {c.tag}
                   </p>
-                  <h3 className={`mt-5 font-serif text-5xl italic ${c.dark ? "text-ivory" : "text-bordeaux"}`}>
+                  <h3 className={`relative mt-5 font-serif text-5xl italic ${thumbs[c.slug] ? "text-ivory drop-shadow-lg" : c.dark ? "text-ivory" : "text-bordeaux"}`}>
                     {c.name}
                   </h3>
                   <p
-                    className={`mt-6 max-w-[15rem] text-sm leading-relaxed ${c.dark ? "text-ivory/75" : "text-stone"}`}
+                    className={`relative mt-6 max-w-[15rem] text-sm leading-relaxed ${thumbs[c.slug] ? "text-ivory/90 drop-shadow" : c.dark ? "text-ivory/75" : "text-stone"}`}
                   >
                     {c.desc}
                   </p>
                   <span
-                    className={`mt-7 inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.3em] ${
-                      c.dark ? "text-gilded" : "text-bordeaux"
+                    className={`relative mt-7 inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.3em] ${
+                      thumbs[c.slug] ? "text-gilded" : c.dark ? "text-gilded" : "text-bordeaux"
                     }`}
                   >
                     Lihat Contoh
