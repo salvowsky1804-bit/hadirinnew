@@ -1,16 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { listTemplates } from "@/lib/template-registry";
-import {
-  dummyDetectedNewTemplate,
-  dummyTemplateActiveState,
-} from "@/data/dummy";
+import { dummyDetectedNewTemplate, dummyTemplateActiveState } from "@/data/dummy";
 import { useProjects } from "@/lib/projects-store";
-import {
-  fetchTemplateThumbnailMap,
-  uploadTemplateThumbnail,
-  clearTemplateThumbnail,
-} from "@/lib/template-thumbnails";
+import { fetchTemplateThumbnailMap, uploadTemplateThumbnail, clearTemplateThumbnail } from "@/lib/template-thumbnails";
 
 export const Route = createFileRoute("/admin/templates")({
   component: TemplatesCatalog,
@@ -32,14 +25,10 @@ function loadActive(): Record<string, boolean> {
 function TemplatesCatalog() {
   const templates = listTemplates();
   const { projects } = useProjects();
-  const [active, setActive] = useState<Record<string, boolean>>(() =>
-    loadActive(),
-  );
+  const [active, setActive] = useState<Record<string, boolean>>(() => loadActive());
   const [dismissedNew, setDismissedNew] = useState(false);
   const [previewSlug, setPreviewSlug] = useState<string | null>(null);
-  const [previewDevice, setPreviewDevice] = useState<"mobile" | "desktop">(
-    "mobile",
-  );
+  const [previewDevice, setPreviewDevice] = useState<"mobile" | "desktop">("mobile");
   const [overrides, setOverrides] = useState<Record<string, string>>({});
   const [busySlug, setBusySlug] = useState<string | null>(null);
   const [uploadErr, setUploadErr] = useState<string | null>(null);
@@ -101,9 +90,7 @@ function TemplatesCatalog() {
     };
   }, [previewSlug]);
 
-  const previewTemplate = templates.find(
-    (t) => t.manifest.slug === previewSlug,
-  );
+  const previewTemplate = templates.find((t) => t.manifest.slug === previewSlug);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -115,35 +102,31 @@ function TemplatesCatalog() {
     setDismissedNew(window.localStorage.getItem(DISMISSED_KEY) === "1");
   }, []);
 
-  const toggle = (slug: string) =>
-    setActive((s) => ({ ...s, [slug]: !(s[slug] ?? true) }));
+  const toggle = (slug: string) => setActive((s) => ({ ...s, [slug]: !(s[slug] ?? true) }));
 
-  const usageCount = (slug: string) =>
-    projects.filter((p) => p.templateSlug === slug).length;
+  const usageCount = (slug: string) => projects.filter((p) => p.templateSlug === slug).length;
 
   const knownSlugs = new Set(templates.map((t) => t.manifest.slug));
-  const showNewDetected =
-    !knownSlugs.has(dummyDetectedNewTemplate.slug) && !dismissedNew;
+  const showNewDetected = !knownSlugs.has(dummyDetectedNewTemplate.slug) && !dismissedNew;
 
   return (
     <section className="space-y-6">
       {showNewDetected && (
-        <div className="flex items-start justify-between gap-4 rounded-lg border border-amber-300 bg-amber-50 p-4">
+        <div className="flex items-start justify-between gap-4 rounded-lg border border-gilded/40 bg-cream p-4">
           <div className="flex items-start gap-3">
             <span
               aria-hidden
-              className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-amber-200 text-amber-900"
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gilded/20 text-bordeaux"
             >
               ✦
             </span>
             <div>
-              <p className="text-sm font-semibold text-amber-900">
+              <p className="text-sm font-semibold text-charcoal">
                 Template baru terdeteksi: {dummyDetectedNewTemplate.name}
               </p>
-              <p className="mt-1 text-xs text-amber-800">
-                Folder <code>src/templates/{dummyDetectedNewTemplate.slug}/</code>{" "}
-                ditemukan namun manifest belum lengkap. Lengkapi{" "}
-                <code>manifest.ts</code> agar otomatis terdaftar di katalog.
+              <p className="mt-1 text-xs text-charcoal/70">
+                Folder <code>src/templates/{dummyDetectedNewTemplate.slug}/</code> ditemukan namun manifest belum
+                lengkap. Lengkapi <code>manifest.ts</code> agar otomatis terdaftar di katalog.
               </p>
             </div>
           </div>
@@ -153,7 +136,7 @@ function TemplatesCatalog() {
               window.localStorage.setItem(DISMISSED_KEY, "1");
               setDismissedNew(true);
             }}
-            className="shrink-0 rounded-md border border-amber-400 px-3 py-1.5 text-xs uppercase tracking-widest text-amber-900 hover:bg-amber-100"
+            className="shrink-0 rounded-md border border-gilded/50 px-3 py-1.5 text-xs uppercase tracking-[0.12em] text-charcoal/80 transition hover:bg-gilded/10"
           >
             Tutup
           </button>
@@ -173,24 +156,10 @@ function TemplatesCatalog() {
           const thumbSrc = overrideUrl ?? manifest.thumbnail;
           const busy = busySlug === manifest.slug;
           return (
-            <article
-              key={manifest.slug}
-              className="overflow-hidden rounded-lg border border-border bg-card"
-            >
+            <article key={manifest.slug} className="sp-card sp-card-hover overflow-hidden">
               <div className="relative aspect-[4/5] overflow-hidden bg-muted">
-                <img
-                  src={thumbSrc}
-                  alt={manifest.name}
-                  loading="lazy"
-                  className="h-full w-full object-cover"
-                />
-                <span
-                  className={`absolute left-3 top-3 rounded-full px-2.5 py-0.5 text-[10px] uppercase tracking-widest ${
-                    isActive
-                      ? "bg-emerald-100 text-emerald-900"
-                      : "bg-muted text-muted-foreground"
-                  }`}
-                >
+                <img src={thumbSrc} alt={manifest.name} loading="lazy" className="h-full w-full object-cover" />
+                <span className={`sp-badge absolute left-3 top-3 ${isActive ? "sp-badge-ok" : "sp-badge-muted"}`}>
                   {isActive ? "Aktif" : "Nonaktif"}
                 </span>
                 {overrideUrl && (
@@ -234,18 +203,12 @@ function TemplatesCatalog() {
               <div className="space-y-3 p-4">
                 <div>
                   <h3 className="font-serif text-xl">{manifest.name}</h3>
-                  {manifest.tagline && (
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {manifest.tagline}
-                    </p>
-                  )}
+                  {manifest.tagline && <p className="mt-1 text-xs text-muted-foreground">{manifest.tagline}</p>}
                 </div>
                 <dl className="grid grid-cols-3 gap-2 text-[11px] uppercase tracking-widest text-muted-foreground">
                   <div>
                     <dt>Kategori</dt>
-                    <dd className="mt-0.5 text-foreground normal-case tracking-normal">
-                      {manifest.category}
-                    </dd>
+                    <dd className="mt-0.5 text-foreground normal-case tracking-normal">{manifest.category}</dd>
                   </div>
                   <div>
                     <dt>Paket</dt>
@@ -255,15 +218,11 @@ function TemplatesCatalog() {
                   </div>
                   <div>
                     <dt>Dipakai</dt>
-                    <dd className="mt-0.5 text-foreground normal-case tracking-normal">
-                      {used} proyek
-                    </dd>
+                    <dd className="mt-0.5 text-foreground normal-case tracking-normal">{used} proyek</dd>
                   </div>
                 </dl>
                 <div className="flex items-center justify-between border-t border-border pt-3">
-                  <span className="text-xs text-muted-foreground">
-                    {manifest.fields.length} field custom
-                  </span>
+                  <span className="text-xs text-muted-foreground">{manifest.fields.length} field custom</span>
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
@@ -299,12 +258,8 @@ function TemplatesCatalog() {
         >
           <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3 text-white">
             <div className="min-w-0">
-              <p className="text-[10px] uppercase tracking-widest text-white/60">
-                Pratinjau Template
-              </p>
-              <h2 className="truncate font-serif text-lg">
-                {previewTemplate.manifest.name}
-              </h2>
+              <p className="text-[10px] uppercase tracking-widest text-white/60">Pratinjau Template</p>
+              <h2 className="truncate font-serif text-lg">{previewTemplate.manifest.name}</h2>
             </div>
             <div className="flex items-center gap-2">
               <div className="inline-flex overflow-hidden rounded-md border border-white/20 text-xs">
@@ -312,9 +267,7 @@ function TemplatesCatalog() {
                   type="button"
                   onClick={() => setPreviewDevice("mobile")}
                   className={`px-3 py-1.5 uppercase tracking-widest ${
-                    previewDevice === "mobile"
-                      ? "bg-white text-black"
-                      : "text-white/80 hover:bg-white/10"
+                    previewDevice === "mobile" ? "bg-white text-black" : "text-white/80 hover:bg-white/10"
                   }`}
                 >
                   Mobile
@@ -323,9 +276,7 @@ function TemplatesCatalog() {
                   type="button"
                   onClick={() => setPreviewDevice("desktop")}
                   className={`px-3 py-1.5 uppercase tracking-widest ${
-                    previewDevice === "desktop"
-                      ? "bg-white text-black"
-                      : "text-white/80 hover:bg-white/10"
+                    previewDevice === "desktop" ? "bg-white text-black" : "text-white/80 hover:bg-white/10"
                   }`}
                 >
                   Desktop
