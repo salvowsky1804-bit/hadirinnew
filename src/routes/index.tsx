@@ -15,6 +15,41 @@ import {
 import heroImg from "@/assets/landing-hero.jpg";
 import craftImg from "@/assets/landing-craft.jpg";
 import leafImg from "@/assets/leaf.png";
+import { fetchTemplateThumbnailMap } from "@/lib/template-thumbnails";
+
+const THUMB_CACHE_KEY = "tpl-thumb-map-v1";
+
+function useTemplateThumbnails() {
+  const [map, setMap] = useState<Record<string, string>>(() => {
+    if (typeof window === "undefined") return {};
+    try {
+      const raw = sessionStorage.getItem(THUMB_CACHE_KEY);
+      return raw ? (JSON.parse(raw) as Record<string, string>) : {};
+    } catch {
+      return {};
+    }
+  });
+  useEffect(() => {
+    let alive = true;
+    fetchTemplateThumbnailMap()
+      .then((m) => {
+        if (!alive) return;
+        setMap(m);
+        try {
+          sessionStorage.setItem(THUMB_CACHE_KEY, JSON.stringify(m));
+        } catch {
+          /* ignore */
+        }
+      })
+      .catch(() => {
+        /* silent — fallback to gradient */
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return map;
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
