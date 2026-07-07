@@ -1,13 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useProjects } from "@/lib/projects-store";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import type { WishEntry } from "@/types/invitation";
 
@@ -33,9 +27,7 @@ function WishesPage() {
     const term = q.trim().toLowerCase();
     let list = project.wishes.filter(
       (w) =>
-        (!term ||
-          w.guestName.toLowerCase().includes(term) ||
-          w.message.toLowerCase().includes(term)) &&
+        (!term || w.guestName.toLowerCase().includes(term) || w.message.toLowerCase().includes(term)) &&
         (filter === "all" ||
           (filter === "visible" && w.visible !== false) ||
           (filter === "hidden" && w.visible === false)),
@@ -50,16 +42,12 @@ function WishesPage() {
   }, [project, q, sort, filter]);
 
   if (loading) {
-    return (
-      <div className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
-        Memuat ucapan tamu…
-      </div>
-    );
+    return <div className="sp-card p-6 text-sm text-muted-foreground">Memuat ucapan tamu…</div>;
   }
 
   if (!project) {
     return (
-      <div className="rounded-lg border border-border bg-card p-6 text-sm">
+      <div className="sp-card p-6 text-sm">
         Proyek tidak ditemukan.{" "}
         <Link to="/wo" className="underline">
           Kembali
@@ -143,19 +131,11 @@ function WishesPage() {
                     : "border-border bg-card hover:border-foreground/40"
                 }`}
               >
-                <button
-                  type="button"
-                  onClick={() => setActive(w)}
-                  className="text-left"
-                >
-                  <p className="line-clamp-4 text-sm leading-relaxed">
-                    {w.message}
-                  </p>
+                <button type="button" onClick={() => setActive(w)} className="text-left">
+                  <p className="line-clamp-4 text-sm leading-relaxed">{w.message}</p>
                 </button>
                 <div className="mt-3 flex items-center justify-between border-t border-border pt-2 text-xs text-muted-foreground">
-                  <span className="font-medium text-foreground">
-                    {w.guestName}
-                  </span>
+                  <span className="font-medium text-foreground">{w.guestName}</span>
                   <span>
                     {new Date(w.submittedAt).toLocaleDateString("id-ID", {
                       day: "2-digit",
@@ -169,25 +149,15 @@ function WishesPage() {
                     <input
                       type="checkbox"
                       checked={w.visible !== false}
-                      onChange={(e) =>
-                        setWishVisibility(projectId, w.id, e.target.checked)
-                      }
+                      onChange={(e) => setWishVisibility(projectId, w.id, e.target.checked)}
                       className="h-3.5 w-3.5 cursor-pointer"
                     />
-                    <span>
-                      {w.visible === false
-                        ? "Disembunyikan"
-                        : "Tampil di undangan"}
-                    </span>
+                    <span>{w.visible === false ? "Disembunyikan" : "Tampil di undangan"}</span>
                   </label>
                   <button
                     type="button"
                     onClick={() => {
-                      if (
-                        confirm(
-                          `Hapus ucapan dari ${w.guestName}? Tindakan ini tidak dapat dibatalkan.`,
-                        )
-                      ) {
+                      if (confirm(`Hapus ucapan dari ${w.guestName}? Tindakan ini tidak dapat dibatalkan.`)) {
                         removeWish(projectId, w.id);
                       }
                     }}
@@ -205,9 +175,7 @@ function WishesPage() {
       <Dialog open={!!active} onOpenChange={(o) => !o && setActive(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle className="font-serif text-2xl">
-              {active?.guestName}
-            </DialogTitle>
+            <DialogTitle className="font-serif text-2xl">{active?.guestName}</DialogTitle>
             <DialogDescription>
               {active
                 ? new Date(active.submittedAt).toLocaleString("id-ID", {
