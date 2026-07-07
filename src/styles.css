@@ -473,3 +473,152 @@
     animation: none !important;
   }
 }
+
+/* ============================================================
+   Studio panel (Admin + WO dashboards) — atelier theming
+   -----------------------------------------------------------
+   Scoped to `.studio-shell` so the marketing landing page, the
+   login screen, and the invitation templates keep their own
+   look. Inside the shell we retune the semantic design tokens
+   from shadcn's cool slate defaults to the brand's warm palette
+   (ivory paper, espresso ink, bordeaux + champagne + sage
+   accents), then add a handful of `sp-` helpers for cards and
+   status badges. Fully reversible — remove the class and the
+   generic theme returns.
+   ============================================================ */
+.studio-shell {
+  /* Warm paper canvas + slightly brighter lifted surfaces */
+  --background: oklch(0.966 0.008 84);
+  --foreground: oklch(0.23 0.014 55);
+  --card: oklch(0.993 0.005 86);
+  --card-foreground: oklch(0.23 0.014 55);
+  --popover: oklch(0.995 0.004 86);
+  --popover-foreground: oklch(0.23 0.014 55);
+
+  /* Espresso ink drives primary actions */
+  --primary: oklch(0.28 0.016 55);
+  --primary-foreground: oklch(0.972 0.01 85);
+
+  /* Warm sand for muted / secondary surfaces and hovers */
+  --secondary: oklch(0.928 0.016 82);
+  --secondary-foreground: oklch(0.28 0.016 55);
+  --muted: oklch(0.929 0.016 82);
+  --muted-foreground: oklch(0.515 0.015 58);
+  --accent: oklch(0.912 0.02 80);
+  --accent-foreground: oklch(0.26 0.016 55);
+
+  /* Bordeaux for focus rings + sharp accents */
+  --ring: oklch(0.44 0.1 18);
+
+  /* Warm hairlines */
+  --border: oklch(0.887 0.014 80);
+  --input: oklch(0.887 0.014 80);
+
+  /* Danger stays unmistakably red, just warmed to sit with the palette */
+  --destructive: oklch(0.505 0.16 25);
+  --destructive-foreground: oklch(0.98 0.01 85);
+
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+@layer utilities {
+  /* Elevated warm surface. Add `sp-card-hover` for interactive tiles. */
+  .sp-card {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 1px 2px oklch(0.28 0.03 45 / 0.05);
+  }
+  .sp-card-hover {
+    transition:
+      box-shadow 0.28s ease,
+      border-color 0.28s ease,
+      transform 0.28s ease;
+  }
+  .sp-card-hover:hover {
+    border-color: oklch(0.79 0.035 68);
+    box-shadow: 0 14px 34px -16px oklch(0.28 0.06 40 / 0.28);
+    transform: translateY(-3px);
+  }
+
+  /* Status pills in brand tones */
+  .sp-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border-radius: 999px;
+    padding: 0.15rem 0.6rem;
+    font-size: 10.5px;
+    line-height: 1.5;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+  .sp-badge-ok {
+    /* sage — published / active / attending */
+    background: oklch(0.925 0.032 148);
+    color: oklch(0.4 0.055 150);
+    border-color: oklch(0.85 0.04 148);
+  }
+  .sp-badge-draft {
+    /* warm sand — draft / tentative */
+    background: oklch(0.935 0.03 80);
+    color: oklch(0.47 0.05 62);
+    border-color: oklch(0.87 0.035 78);
+  }
+  .sp-badge-wine {
+    /* bordeaux — declined / emphasis */
+    background: oklch(0.93 0.035 20);
+    color: oklch(0.43 0.11 20);
+    border-color: oklch(0.88 0.045 20);
+  }
+  .sp-badge-muted {
+    background: var(--muted);
+    color: var(--muted-foreground);
+    border-color: var(--border);
+  }
+  .sp-dot {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 999px;
+    background: currentColor;
+  }
+
+  /* Small espresso identity circle (initials) */
+  .sp-avatar {
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  /* Gentle content enter for dashboard pages */
+  .sp-enter {
+    animation: spEnter 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  @keyframes spEnter {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sp-enter {
+    animation: none !important;
+  }
+  .sp-card-hover {
+    transition: none !important;
+  }
+}
