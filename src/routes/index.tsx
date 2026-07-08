@@ -261,6 +261,7 @@ function SiteNav() {
     ["Filosofi", "#filosofi"],
     ["Proses", "#proses"],
     ["Galeri", "#galeri"],
+    ["Katalog", "/katalog"],
     ["Kontak", "#kontak"],
   ];
   return (
@@ -772,6 +773,15 @@ function Showcase() {
             </p>
           </Reveal>
         </div>
+        <Reveal delay={140} className="mt-8">
+          <Link
+            to="/katalog"
+            className="group inline-flex items-center gap-2 rounded-full border border-bordeaux/30 px-5 py-2.5 text-[11px] uppercase tracking-[0.25em] text-bordeaux transition hover:bg-bordeaux hover:text-ivory"
+          >
+            Lihat Seluruh Katalog
+            <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+          </Link>
+        </Reveal>
         <div className="mt-14 grid gap-7 md:grid-cols-3">
           {cards.map((c, i) => (
             <Reveal as="div" key={c.slug} delay={i * 100}>
