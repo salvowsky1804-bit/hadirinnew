@@ -261,6 +261,7 @@ function SiteNav() {
     ["Filosofi", "#filosofi"],
     ["Proses", "#proses"],
     ["Galeri", "#galeri"],
+    ["Katalog", "/katalog"],
     ["Kontak", "#kontak"],
   ];
   return (

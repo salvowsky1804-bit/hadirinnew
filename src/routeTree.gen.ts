@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WoRouteImport } from './routes/wo'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as KatalogRouteImport } from './routes/katalog'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WoIndexRouteImport } from './routes/wo.index'
@@ -35,6 +36,11 @@ const WoRoute = WoRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KatalogRoute = KatalogRouteImport.update({
+  id: '/katalog',
+  path: '/katalog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -118,6 +124,7 @@ const WoProjectsProjectIdRsvpRoute = WoProjectsProjectIdRsvpRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/katalog': typeof KatalogRoute
   '/login': typeof LoginRoute
   '/wo': typeof WoRouteWithChildren
   '/admin/projects': typeof AdminProjectsRoute
@@ -136,6 +143,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/katalog': typeof KatalogRoute
   '/login': typeof LoginRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -154,6 +162,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/katalog': typeof KatalogRoute
   '/login': typeof LoginRoute
   '/wo': typeof WoRouteWithChildren
   '/admin/projects': typeof AdminProjectsRoute
@@ -175,6 +184,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/katalog'
     | '/login'
     | '/wo'
     | '/admin/projects'
@@ -193,6 +203,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/katalog'
     | '/login'
     | '/admin/projects'
     | '/admin/settings'
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/katalog'
     | '/login'
     | '/wo'
     | '/admin/projects'
@@ -230,6 +242,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
+  KatalogRoute: typeof KatalogRoute
   LoginRoute: typeof LoginRoute
   WoRoute: typeof WoRouteWithChildren
   PreviewTemplateSlugRoute: typeof PreviewTemplateSlugRoute
@@ -250,6 +263,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/katalog': {
+      id: '/katalog'
+      path: '/katalog'
+      fullPath: '/katalog'
+      preLoaderRoute: typeof KatalogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -410,6 +430,7 @@ const WoRouteWithChildren = WoRoute._addFileChildren(WoRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
+  KatalogRoute: KatalogRoute,
   LoginRoute: LoginRoute,
   WoRoute: WoRouteWithChildren,
   PreviewTemplateSlugRoute: PreviewTemplateSlugRoute,
@@ -418,13 +439,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
