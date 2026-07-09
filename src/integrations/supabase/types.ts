@@ -61,6 +61,48 @@ export type Database = {
           },
         ]
       }
+      offline_templates: {
+        Row: {
+          active: boolean
+          category: string | null
+          cover_path: string | null
+          created_at: string
+          description: string | null
+          files: Json
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category?: string | null
+          cover_path?: string | null
+          created_at?: string
+          description?: string | null
+          files?: Json
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category?: string | null
+          cover_path?: string | null
+          created_at?: string
+          description?: string | null
+          files?: Json
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           active: boolean
