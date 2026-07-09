@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { DashboardShell } from "@/components/DashboardShell";
-import { LayoutDashboard, FileStack, LayoutTemplate, Users, Settings } from "lucide-react";
+import { LayoutDashboard, FileStack, LayoutTemplate, Users, Settings, Printer } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -32,6 +32,11 @@ function AdminLayout() {
           to: "/admin/templates",
           label: "Katalog Template",
           icon: <LayoutTemplate className={icon} />,
+        },
+        {
+          to: "/admin/offline-templates",
+          label: "Undangan Offline",
+          icon: <Printer className={icon} />,
         },
         {
           to: "/admin/team",
