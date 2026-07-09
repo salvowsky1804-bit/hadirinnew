@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ArrowRight, Search, ExternalLink } from "lucide-react";
+import { ArrowLeft, ArrowRight, Search, ExternalLink, Download, FileText, ChevronLeft, ChevronRight } from "lucide-react";
 import { listTemplates } from "@/lib/template-registry";
 import { fetchTemplateThumbnailMap } from "@/lib/template-thumbnails";
+import { listOfflineTemplates, type OfflineTemplateWithUrls } from "@/lib/offline-templates";
 
 export const Route = createFileRoute("/katalog")({
   head: () => ({
@@ -28,17 +29,24 @@ type DeviceMode = "mobile" | "desktop";
 function KatalogPage() {
   const templates = listTemplates();
   const [thumbs, setThumbs] = useState<Record<string, string>>({});
+  const [offline, setOffline] = useState<OfflineTemplateWithUrls[]>([]);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<"all" | "online" | "offline">("all");
   const [pkg, setPkg] = useState<string>("all");
   const [previewSlug, setPreviewSlug] = useState<string | null>(null);
   const [device, setDevice] = useState<DeviceMode>("desktop");
+  const [offlinePreview, setOfflinePreview] = useState<OfflineTemplateWithUrls | null>(null);
 
   useEffect(() => {
     let alive = true;
     fetchTemplateThumbnailMap()
       .then((m) => {
         if (alive) setThumbs(m);
+      })
+      .catch(() => {});
+    listOfflineTemplates()
+      .then((rows) => {
+        if (alive) setOffline(rows);
       })
       .catch(() => {});
     return () => {
@@ -54,10 +62,10 @@ function KatalogPage() {
     return Array.from(s).sort();
   }, [templates]);
 
-  const filtered = useMemo(() => {
+  const filteredOnline = useMemo(() => {
     const q = query.trim().toLowerCase();
     return templates.filter(({ manifest: m }) => {
-      if (category !== "all" && m.category !== category) return false;
+      if (m.category !== "online") return false;
       if (pkg !== "all" && m.internalPackage !== pkg) return false;
       if (q) {
         const hay = `${m.name} ${m.tagline ?? ""} ${m.internalPackage ?? ""}`.toLowerCase();
@@ -66,6 +74,22 @@ function KatalogPage() {
       return true;
     });
   }, [templates, category, pkg, query]);
+
+  const filteredOffline = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return offline.filter((t) => {
+      if (q) {
+        const hay = `${t.name} ${t.category ?? ""} ${t.description ?? ""}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [offline, query]);
+
+  const showOnline = category === "all" || category === "online";
+  const showOffline = category === "all" || category === "offline";
+  const totalShown = (showOnline ? filteredOnline.length : 0) + (showOffline ? filteredOffline.length : 0);
+  const totalAll = templates.filter((t) => t.manifest.category === "online").length + offline.length;
 
   useEffect(() => {
     if (!previewSlug) return;
@@ -80,6 +104,20 @@ function KatalogPage() {
       window.removeEventListener("keydown", onKey);
     };
   }, [previewSlug]);
+
+  useEffect(() => {
+    if (!offlinePreview) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOfflinePreview(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [offlinePreview]);
 
   const previewTpl = templates.find((t) => t.manifest.slug === previewSlug);
 
@@ -152,12 +190,12 @@ function KatalogPage() {
         </div>
 
         <p className="mt-5 text-xs uppercase tracking-[0.25em] text-stone">
-          Menampilkan {filtered.length} dari {templates.length} template
+          Menampilkan {totalShown} dari {totalAll} template
         </p>
 
         {/* Grid */}
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map(({ manifest: m }) => {
+          {showOnline && filteredOnline.map(({ manifest: m }) => {
             const thumb = thumbs[m.slug] ?? m.thumbnail;
             return (
               <article
@@ -217,7 +255,59 @@ function KatalogPage() {
             );
           })}
 
-          {filtered.length === 0 && (
+          {showOffline && filteredOffline.map((t) => {
+            const firstImage = t.file_urls.find((f) => f.kind === "image");
+            const cover = t.cover_url ?? firstImage?.url ?? null;
+            const pdfCount = t.files.filter((f) => f.kind === "pdf").length;
+            const imgCount = t.files.filter((f) => f.kind === "image").length;
+            return (
+              <article
+                key={t.id}
+                className="group overflow-hidden rounded-2xl border border-charcoal/10 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-bordeaux/10"
+              >
+                <button
+                  type="button"
+                  onClick={() => setOfflinePreview(t)}
+                  className="relative block aspect-[4/5] w-full overflow-hidden bg-gradient-to-br from-cream to-ivory"
+                >
+                  {cover ? (
+                    <img
+                      src={cover}
+                      alt={`Undangan cetak ${t.name}`}
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-xs uppercase tracking-widest text-stone">
+                      <FileText className="mr-2 h-4 w-4" /> Cetak
+                    </div>
+                  )}
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent p-4 text-left">
+                    <p className="text-[10px] uppercase tracking-[0.3em] text-gilded">{t.category ?? "Cetak"}</p>
+                    <h3 className="mt-1 font-serif text-2xl italic text-ivory drop-shadow">{t.name}</h3>
+                  </div>
+                  <span className="absolute right-3 top-3 rounded-full bg-white/90 px-2.5 py-0.5 text-[10px] uppercase tracking-[0.2em] text-charcoal">
+                    offline
+                  </span>
+                </button>
+                <div className="flex items-center justify-between gap-3 p-4">
+                  <p className="line-clamp-2 text-xs leading-relaxed text-stone">
+                    {t.description ?? `${imgCount} gambar${pdfCount ? ` • ${pdfCount} PDF` : ""}`}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setOfflinePreview(t)}
+                    className="shrink-0 rounded-full bg-bordeaux px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-ivory hover:bg-charcoal"
+                  >
+                    Lihat
+                  </button>
+                </div>
+              </article>
+            );
+          })}
+
+          {totalShown === 0 && (
             <div className="col-span-full rounded-2xl border border-dashed border-charcoal/20 bg-white/50 p-10 text-center">
               <p className="text-sm text-stone">Tidak ada template yang cocok dengan filter.</p>
               <button
@@ -306,6 +396,130 @@ function KatalogPage() {
               />
             </div>
           </div>
+        </div>
+      )}
+
+      {offlinePreview && (
+        <OfflinePreviewModal tpl={offlinePreview} onClose={() => setOfflinePreview(null)} />
+      )}
+    </div>
+  );
+}
+
+function OfflinePreviewModal({ tpl, onClose }: { tpl: OfflineTemplateWithUrls; onClose: () => void }) {
+  const images = tpl.file_urls.filter((f) => f.kind === "image");
+  const pdfs = tpl.file_urls.filter((f) => f.kind === "pdf");
+  const [idx, setIdx] = useState(0);
+  const cur = images[idx];
+  const total = images.length;
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") setIdx((i) => (i - 1 + total) % Math.max(total, 1));
+      if (e.key === "ArrowRight") setIdx((i) => (i + 1) % Math.max(total, 1));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [total]);
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Pratinjau undangan cetak ${tpl.name}`}
+      className="fixed inset-0 z-50 flex flex-col bg-black/85 backdrop-blur-sm"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3 text-white">
+        <div className="min-w-0">
+          <p className="text-[10px] uppercase tracking-widest text-white/60">Undangan Cetak {tpl.category ? `• ${tpl.category}` : ""}</p>
+          <h2 className="truncate font-serif text-lg">{tpl.name}</h2>
+        </div>
+        <div className="flex items-center gap-2">
+          {pdfs.map((p) => (
+            <a
+              key={p.path}
+              href={p.url}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1 rounded-md border border-white/20 px-3 py-1.5 text-xs uppercase tracking-widest text-white hover:bg-white/10"
+            >
+              <Download className="h-3.5 w-3.5" /> PDF
+            </a>
+          ))}
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-md border border-white/20 px-3 py-1.5 text-xs uppercase tracking-widest text-white hover:bg-white/10"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
+
+      <div className="relative flex flex-1 items-center justify-center overflow-hidden p-4">
+        {total === 0 && pdfs.length === 0 && (
+          <p className="text-sm text-white/70">Belum ada berkas untuk template ini.</p>
+        )}
+        {total === 0 && pdfs.length > 0 && (
+          <div className="grid gap-3 text-center text-white">
+            <p className="text-sm">Template ini disediakan dalam format PDF.</p>
+            {pdfs.map((p) => (
+              <a key={p.path} href={p.url} target="_blank" rel="noreferrer" className="rounded-md bg-white/10 px-4 py-2 text-xs uppercase tracking-widest hover:bg-white/20">
+                <Download className="mr-2 inline h-3.5 w-3.5" /> {p.name}
+              </a>
+            ))}
+          </div>
+        )}
+        {cur && (
+          <>
+            <img
+              key={cur.path}
+              src={cur.url}
+              alt={`${tpl.name} halaman ${idx + 1}`}
+              className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
+            />
+            {total > 1 && (
+              <>
+                <button
+                  type="button"
+                  aria-label="Sebelumnya"
+                  onClick={() => setIdx((i) => (i - 1 + total) % total)}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white hover:bg-black/70"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Berikutnya"
+                  onClick={() => setIdx((i) => (i + 1) % total)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white hover:bg-black/70"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/60 px-3 py-1 text-xs text-white">
+                  {idx + 1} / {total}
+                </div>
+              </>
+            )}
+          </>
+        )}
+      </div>
+
+      {total > 1 && (
+        <div className="flex gap-2 overflow-x-auto border-t border-white/10 bg-black/50 px-4 py-3">
+          {images.map((f, i) => (
+            <button
+              key={f.path}
+              type="button"
+              onClick={() => setIdx(i)}
+              className={`h-16 w-16 shrink-0 overflow-hidden rounded border-2 ${i === idx ? "border-bordeaux" : "border-white/20"}`}
+            >
+              <img src={f.url} alt="" className="h-full w-full object-cover" loading="lazy" />
+            </button>
+          ))}
         </div>
       )}
     </div>

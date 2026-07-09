@@ -23,6 +23,7 @@ import { Route as AdminTemplatesRouteImport } from './routes/admin.templates'
 import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminProjectsRouteImport } from './routes/admin.projects'
+import { Route as AdminOfflineTemplatesRouteImport } from './routes/admin.offline-templates'
 import { Route as WoProjectsProjectIdRouteImport } from './routes/wo.projects.$projectId'
 import { Route as WoProjectsProjectIdIndexRouteImport } from './routes/wo.projects.$projectId.index'
 import { Route as WoProjectsProjectIdWishesRouteImport } from './routes/wo.projects.$projectId.wishes'
@@ -98,6 +99,11 @@ const AdminProjectsRoute = AdminProjectsRouteImport.update({
   path: '/projects',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminOfflineTemplatesRoute = AdminOfflineTemplatesRouteImport.update({
+  id: '/offline-templates',
+  path: '/offline-templates',
+  getParentRoute: () => AdminRoute,
+} as any)
 const WoProjectsProjectIdRoute = WoProjectsProjectIdRouteImport.update({
   id: '/projects/$projectId',
   path: '/projects/$projectId',
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/katalog': typeof KatalogRoute
   '/login': typeof LoginRoute
   '/wo': typeof WoRouteWithChildren
+  '/admin/offline-templates': typeof AdminOfflineTemplatesRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/team': typeof AdminTeamRoute
@@ -145,6 +152,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/katalog': typeof KatalogRoute
   '/login': typeof LoginRoute
+  '/admin/offline-templates': typeof AdminOfflineTemplatesRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/team': typeof AdminTeamRoute
@@ -165,6 +173,7 @@ export interface FileRoutesById {
   '/katalog': typeof KatalogRoute
   '/login': typeof LoginRoute
   '/wo': typeof WoRouteWithChildren
+  '/admin/offline-templates': typeof AdminOfflineTemplatesRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/team': typeof AdminTeamRoute
@@ -187,6 +196,7 @@ export interface FileRouteTypes {
     | '/katalog'
     | '/login'
     | '/wo'
+    | '/admin/offline-templates'
     | '/admin/projects'
     | '/admin/settings'
     | '/admin/team'
@@ -205,6 +215,7 @@ export interface FileRouteTypes {
     | '/'
     | '/katalog'
     | '/login'
+    | '/admin/offline-templates'
     | '/admin/projects'
     | '/admin/settings'
     | '/admin/team'
@@ -224,6 +235,7 @@ export interface FileRouteTypes {
     | '/katalog'
     | '/login'
     | '/wo'
+    | '/admin/offline-templates'
     | '/admin/projects'
     | '/admin/settings'
     | '/admin/team'
@@ -349,6 +361,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProjectsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/offline-templates': {
+      id: '/admin/offline-templates'
+      path: '/offline-templates'
+      fullPath: '/admin/offline-templates'
+      preLoaderRoute: typeof AdminOfflineTemplatesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/wo/projects/$projectId': {
       id: '/wo/projects/$projectId'
       path: '/projects/$projectId'
@@ -381,6 +400,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminOfflineTemplatesRoute: typeof AdminOfflineTemplatesRoute
   AdminProjectsRoute: typeof AdminProjectsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminTeamRoute: typeof AdminTeamRoute
@@ -389,6 +409,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminOfflineTemplatesRoute: AdminOfflineTemplatesRoute,
   AdminProjectsRoute: AdminProjectsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminTeamRoute: AdminTeamRoute,
