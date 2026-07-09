@@ -126,7 +126,7 @@ export async function deleteOfflineTemplate(id: string): Promise<void> {
   const { data } = await supabase.from("offline_templates").select("cover_path, files").eq("id", id).maybeSingle();
   const paths: string[] = [];
   if (data?.cover_path) paths.push(data.cover_path as string);
-  const files = ((data?.files ?? []) as OfflineFile[]) ?? [];
+  const files = (data?.files ?? []) as OfflineFile[];
   files.forEach((f) => paths.push(f.path));
   if (paths.length) await supabase.storage.from(BUCKET).remove(paths);
   const { error } = await supabase.from("offline_templates").delete().eq("id", id);
