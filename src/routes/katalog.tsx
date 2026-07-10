@@ -309,8 +309,8 @@ function KatalogPage() {
                     <p className="text-[10px] uppercase tracking-[0.3em] text-gilded">{t.category ?? "Cetak"}</p>
                     <h3 className="mt-1 font-serif text-2xl italic text-ivory drop-shadow">{t.name}</h3>
                   </div>
-                  <span className="absolute right-3 top-3 rounded-full bg-white/90 px-2.5 py-0.5 text-[10px] uppercase tracking-[0.2em] text-charcoal">
-                    offline
+                  <span className="absolute right-3 top-3 rounded-full bg-bordeaux/90 px-2.5 py-0.5 text-[10px] uppercase tracking-[0.2em] text-ivory">
+                    Cetak
                   </span>
                 </button>
                 <div className="flex items-center justify-between gap-3 p-4">
