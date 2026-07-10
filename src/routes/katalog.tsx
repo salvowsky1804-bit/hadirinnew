@@ -33,6 +33,7 @@ function KatalogPage() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<"all" | "online" | "offline">("all");
   const [pkg, setPkg] = useState<string>("all");
+  const [offlineCategory, setOfflineCategory] = useState<string>("all");
   const [previewSlug, setPreviewSlug] = useState<string | null>(null);
   const [device, setDevice] = useState<DeviceMode>("desktop");
   const [offlinePreview, setOfflinePreview] = useState<OfflineTemplateWithUrls | null>(null);
@@ -62,6 +63,14 @@ function KatalogPage() {
     return Array.from(s).sort();
   }, [templates]);
 
+  const offlineCategories = useMemo(() => {
+    const s = new Set<string>();
+    offline.forEach((t) => {
+      if (t.category?.trim()) s.add(t.category.trim());
+    });
+    return Array.from(s).sort();
+  }, [offline]);
+
   const filteredOnline = useMemo(() => {
     const q = query.trim().toLowerCase();
     return templates.filter(({ manifest: m }) => {
@@ -78,13 +87,14 @@ function KatalogPage() {
   const filteredOffline = useMemo(() => {
     const q = query.trim().toLowerCase();
     return offline.filter((t) => {
+      if (offlineCategory !== "all" && t.category?.trim() !== offlineCategory) return false;
       if (q) {
         const hay = `${t.name} ${t.category ?? ""} ${t.description ?? ""}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
     });
-  }, [offline, query]);
+  }, [offline, offlineCategory, query]);
 
   const showOnline = category === "all" || category === "online";
   const showOffline = category === "all" || category === "offline";
@@ -184,6 +194,18 @@ function KatalogPage() {
               options={[
                 { value: "all", label: "Semua" },
                 ...packages.map((p) => ({ value: p, label: p })),
+              ]}
+            />
+          )}
+
+          {showOffline && offlineCategories.length > 0 && (
+            <FilterGroup
+              label="Kategori Cetak"
+              value={offlineCategory}
+              onChange={setOfflineCategory}
+              options={[
+                { value: "all", label: "Semua" },
+                ...offlineCategories.map((c) => ({ value: c, label: c })),
               ]}
             />
           )}
@@ -316,6 +338,7 @@ function KatalogPage() {
                   setQuery("");
                   setCategory("all");
                   setPkg("all");
+                  setOfflineCategory("all");
                 }}
                 className="mt-4 inline-flex items-center gap-2 rounded-full border border-charcoal/20 px-4 py-2 text-xs uppercase tracking-[0.22em] text-charcoal hover:border-bordeaux hover:text-bordeaux"
               >
