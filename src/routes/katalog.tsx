@@ -338,6 +338,7 @@ function KatalogPage() {
                   setQuery("");
                   setCategory("all");
                   setPkg("all");
+                  setOfflineCategory("all");
                 }}
                 className="mt-4 inline-flex items-center gap-2 rounded-full border border-charcoal/20 px-4 py-2 text-xs uppercase tracking-[0.22em] text-charcoal hover:border-bordeaux hover:text-bordeaux"
               >
