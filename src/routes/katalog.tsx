@@ -197,6 +197,18 @@ function KatalogPage() {
               ]}
             />
           )}
+
+          {showOffline && offlineCategories.length > 0 && (
+            <FilterGroup
+              label="Kategori Cetak"
+              value={offlineCategory}
+              onChange={setOfflineCategory}
+              options={[
+                { value: "all", label: "Semua" },
+                ...offlineCategories.map((c) => ({ value: c, label: c })),
+              ]}
+            />
+          )}
         </div>
 
         <p className="mt-5 text-xs uppercase tracking-[0.25em] text-stone">
