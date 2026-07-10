@@ -63,6 +63,14 @@ function KatalogPage() {
     return Array.from(s).sort();
   }, [templates]);
 
+  const offlineCategories = useMemo(() => {
+    const s = new Set<string>();
+    offline.forEach((t) => {
+      if (t.category?.trim()) s.add(t.category.trim());
+    });
+    return Array.from(s).sort();
+  }, [offline]);
+
   const filteredOnline = useMemo(() => {
     const q = query.trim().toLowerCase();
     return templates.filter(({ manifest: m }) => {
@@ -79,13 +87,14 @@ function KatalogPage() {
   const filteredOffline = useMemo(() => {
     const q = query.trim().toLowerCase();
     return offline.filter((t) => {
+      if (offlineCategory !== "all" && t.category?.trim() !== offlineCategory) return false;
       if (q) {
         const hay = `${t.name} ${t.category ?? ""} ${t.description ?? ""}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
     });
-  }, [offline, query]);
+  }, [offline, offlineCategory, query]);
 
   const showOnline = category === "all" || category === "online";
   const showOffline = category === "all" || category === "offline";
