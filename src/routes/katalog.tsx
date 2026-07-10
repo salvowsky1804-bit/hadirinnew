@@ -33,6 +33,7 @@ function KatalogPage() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<"all" | "online" | "offline">("all");
   const [pkg, setPkg] = useState<string>("all");
+  const [offlineCategory, setOfflineCategory] = useState<string>("all");
   const [previewSlug, setPreviewSlug] = useState<string | null>(null);
   const [device, setDevice] = useState<DeviceMode>("desktop");
   const [offlinePreview, setOfflinePreview] = useState<OfflineTemplateWithUrls | null>(null);
