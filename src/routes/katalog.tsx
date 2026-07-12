@@ -37,6 +37,27 @@ function KatalogPage() {
   const [previewSlug, setPreviewSlug] = useState<string | null>(null);
   const [device, setDevice] = useState<DeviceMode>("desktop");
   const [offlinePreview, setOfflinePreview] = useState<OfflineTemplateWithUrls | null>(null);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+
+  // Warm up a template chunk + its hero thumbnail before the user clicks.
+  const warmTemplate = (slug: string) => {
+    const entry = templates.find((t) => t.manifest.slug === slug);
+    if (!entry) return;
+    // trigger dynamic import; result is cached by Vite/browser
+    entry.load().catch(() => {});
+    const thumb = thumbs[slug] ?? entry.manifest.thumbnail;
+    if (thumb) {
+      const img = new Image();
+      img.src = thumb;
+    }
+  };
+
+  const openPreview = (slug: string) => {
+    warmTemplate(slug);
+    setIframeLoaded(false);
+    setDevice("desktop");
+    setPreviewSlug(slug);
+  };
 
   useEffect(() => {
     let alive = true;
@@ -226,10 +247,10 @@ function KatalogPage() {
               >
                 <button
                   type="button"
-                  onClick={() => {
-                    setDevice("desktop");
-                    setPreviewSlug(m.slug);
-                  }}
+                  onClick={() => openPreview(m.slug)}
+                  onMouseEnter={() => warmTemplate(m.slug)}
+                  onFocus={() => warmTemplate(m.slug)}
+                  onTouchStart={() => warmTemplate(m.slug)}
                   className="relative block aspect-[4/5] w-full overflow-hidden bg-gradient-to-br from-cream to-ivory"
                 >
                   {thumb ? (
@@ -254,10 +275,9 @@ function KatalogPage() {
                   <div className="flex shrink-0 items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => {
-                        setDevice("desktop");
-                        setPreviewSlug(m.slug);
-                      }}
+                      onClick={() => openPreview(m.slug)}
+                      onMouseEnter={() => warmTemplate(m.slug)}
+                      onFocus={() => warmTemplate(m.slug)}
                       className="rounded-full bg-bordeaux px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-ivory hover:bg-charcoal"
                     >
                       Pratinjau
@@ -266,6 +286,7 @@ function KatalogPage() {
                       href={`/preview/${m.slug}`}
                       target="_blank"
                       rel="noreferrer"
+                      onMouseEnter={() => warmTemplate(m.slug)}
                       aria-label={`Buka pratinjau ${m.name} di tab baru`}
                       className="rounded-full border border-charcoal/20 p-1.5 text-charcoal hover:border-bordeaux hover:text-bordeaux"
                     >
