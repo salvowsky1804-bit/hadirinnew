@@ -432,12 +432,23 @@ function KatalogPage() {
                   : "h-[min(90vh,900px)] w-full max-w-6xl"
               }`}
             >
-              <iframe
-                key={previewTpl.manifest.slug + device}
-                title={`Pratinjau ${previewTpl.manifest.name}`}
-                src={`/preview/${previewTpl.manifest.slug}`}
-                className="h-full w-full border-0"
-              />
+              <div className="relative h-full w-full">
+                {!iframeLoaded && (
+                  <div className="absolute inset-0 grid place-items-center bg-ivory text-xs uppercase tracking-[0.3em] text-stone">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="h-8 w-8 animate-spin rounded-full border-2 border-bordeaux/30 border-t-bordeaux" />
+                      Memuat pratinjau…
+                    </div>
+                  </div>
+                )}
+                <iframe
+                  key={previewTpl.manifest.slug}
+                  title={`Pratinjau ${previewTpl.manifest.name}`}
+                  src={`/preview/${previewTpl.manifest.slug}`}
+                  onLoad={() => setIframeLoaded(true)}
+                  className="h-full w-full border-0"
+                />
+              </div>
             </div>
           </div>
         </div>
