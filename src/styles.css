@@ -487,39 +487,76 @@
    generic theme returns.
    ============================================================ */
 .studio-shell {
-  /* Warm paper canvas + slightly brighter lifted surfaces */
-  --background: oklch(0.966 0.008 84);
-  --foreground: oklch(0.23 0.014 55);
-  --card: oklch(0.993 0.005 86);
-  --card-foreground: oklch(0.23 0.014 55);
-  --popover: oklch(0.995 0.004 86);
-  --popover-foreground: oklch(0.23 0.014 55);
+  /* Clean SaaS canvas: near-white app background, pure white surfaces */
+  --background: oklch(0.981 0.003 85);
+  --foreground: oklch(0.235 0.012 60);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.235 0.012 60);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.235 0.012 60);
 
   /* Espresso ink drives primary actions */
-  --primary: oklch(0.28 0.016 55);
-  --primary-foreground: oklch(0.972 0.01 85);
+  --primary: oklch(0.29 0.016 55);
+  --primary-foreground: oklch(0.985 0.005 85);
 
-  /* Warm sand for muted / secondary surfaces and hovers */
-  --secondary: oklch(0.928 0.016 82);
-  --secondary-foreground: oklch(0.28 0.016 55);
-  --muted: oklch(0.929 0.016 82);
-  --muted-foreground: oklch(0.515 0.015 58);
-  --accent: oklch(0.912 0.02 80);
-  --accent-foreground: oklch(0.26 0.016 55);
+  --secondary: oklch(0.962 0.006 82);
+  --secondary-foreground: oklch(0.29 0.016 55);
+  --muted: oklch(0.966 0.005 82);
+  --muted-foreground: oklch(0.548 0.012 60);
+  --accent: oklch(0.955 0.008 80);
+  --accent-foreground: oklch(0.27 0.016 55);
 
   /* Bordeaux for focus rings + sharp accents */
   --ring: oklch(0.44 0.1 18);
 
-  /* Warm hairlines */
-  --border: oklch(0.887 0.014 80);
-  --input: oklch(0.887 0.014 80);
+  /* Hairlines */
+  --border: oklch(0.922 0.006 80);
+  --input: oklch(0.922 0.006 80);
 
-  /* Danger stays unmistakably red, just warmed to sit with the palette */
   --destructive: oklch(0.505 0.16 25);
   --destructive-foreground: oklch(0.98 0.01 85);
 
+  --radius: 0.75rem;
+
   background-color: var(--background);
   color: var(--foreground);
+  font-family: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.006em;
+}
+
+/* Inside the panel, headings use the same friendly UI face — no serif. */
+.studio-shell .font-serif,
+.studio-shell h1,
+.studio-shell h2,
+.studio-shell h3,
+.studio-shell h4 {
+  font-family: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.018em;
+}
+
+/* Consistent, quiet form controls across the panel */
+.studio-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.studio-shell select,
+.studio-shell textarea {
+  border-radius: 0.6rem;
+  background-color: var(--card);
+  border-color: var(--border);
+  font-size: 0.875rem;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.studio-shell input:focus-visible,
+.studio-shell select:focus-visible,
+.studio-shell textarea:focus-visible {
+  outline: none;
+  border-color: oklch(0.72 0.05 40);
+  box-shadow: 0 0 0 3px oklch(0.44 0.1 18 / 0.12);
+}
+.studio-shell table th {
+  font-weight: 600;
 }
 
 @layer utilities {
@@ -527,19 +564,21 @@
   .sp-card {
     background-color: var(--card);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    box-shadow: 0 1px 2px oklch(0.28 0.03 45 / 0.05);
+    border-radius: 0.875rem;
+    box-shadow:
+      0 1px 2px oklch(0.25 0.02 45 / 0.04),
+      0 1px 1px oklch(0.25 0.02 45 / 0.03);
   }
   .sp-card-hover {
     transition:
-      box-shadow 0.28s ease,
-      border-color 0.28s ease,
-      transform 0.28s ease;
+      box-shadow 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.2s ease;
   }
   .sp-card-hover:hover {
-    border-color: oklch(0.79 0.035 68);
-    box-shadow: 0 14px 34px -16px oklch(0.28 0.06 40 / 0.28);
-    transform: translateY(-3px);
+    border-color: oklch(0.86 0.012 70);
+    box-shadow: 0 10px 24px -14px oklch(0.25 0.03 40 / 0.3);
+    transform: translateY(-2px);
   }
 
   /* Status pills in brand tones */

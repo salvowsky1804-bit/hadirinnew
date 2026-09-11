@@ -65,64 +65,71 @@ export function DashboardShell({ area, navItems, requiredRole }: Props) {
     <div className="studio-shell min-h-dvh bg-background text-foreground">
       <div className="flex min-h-dvh">
         {/* ---- Sidebar rail (md+) ---- */}
-        <aside className="hidden w-64 shrink-0 flex-col bg-charcoal text-ivory md:flex" aria-label={`Navigasi ${area}`}>
-          <div className="border-b border-ivory/10 px-6 py-6">
-            <Link to="/" className="group inline-flex flex-col">
-              <span className="inline-flex items-center gap-2">
-                <span aria-hidden className="inline-block h-4 w-4 rotate-45 rounded-[3px] border border-gilded/70" />
-                <span className="font-serif text-xl leading-none tracking-wide">Studio Undangan</span>
+        <aside
+          className="hidden w-64 shrink-0 flex-col border-r border-border bg-card md:flex"
+          aria-label={`Navigasi ${area}`}
+        >
+          <div className="px-5 py-5">
+            <Link to="/" className="group flex items-center gap-2.5">
+              <span
+                aria-hidden
+                className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-primary-foreground text-[11px] font-bold"
+              >
+                SU
               </span>
-              <span className="mt-2 pl-6 text-[10px] uppercase tracking-[0.4em] text-gilded">Area {area}</span>
+              <span className="min-w-0">
+                <span className="block truncate text-sm font-semibold leading-tight text-foreground">
+                  Studio Undangan
+                </span>
+                <span className="block text-[11px] leading-tight text-muted-foreground">Area {area}</span>
+              </span>
             </Link>
           </div>
 
-          <nav className="flex-1 space-y-1 p-3">
+          <nav className="flex-1 space-y-0.5 px-3 pb-3">
+            <p className="px-3 pb-2 pt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/70">
+              Menu
+            </p>
             {navItems.map((item) => {
               const active = isActive(item.to, item.exact);
               return (
                 <Link
                   key={item.to}
                   to={item.to}
-                  className={`relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition ${
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition ${
                     active
-                      ? "bg-ivory font-medium text-charcoal shadow-sm"
-                      : "text-ivory/65 hover:bg-ivory/10 hover:text-ivory"
+                      ? "bg-secondary font-semibold text-foreground"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   }`}
                   aria-current={active ? "page" : undefined}
                 >
-                  {active && (
-                    <span
-                      aria-hidden
-                      className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r bg-gilded"
-                    />
-                  )}
                   {item.icon && (
                     <span
-                      className={`grid h-5 w-5 shrink-0 place-items-center ${
-                        active ? "text-bordeaux" : "text-ivory/55"
+                      className={`grid h-4 w-4 shrink-0 place-items-center ${
+                        active ? "text-bordeaux" : "text-muted-foreground"
                       }`}
                     >
                       {item.icon}
                     </span>
                   )}
-                  <span>{item.label}</span>
+                  <span className="truncate">{item.label}</span>
                 </Link>
               );
             })}
           </nav>
 
-          <div className="border-t border-ivory/10 p-4">
-            <div className="flex items-center gap-3">
-              <span className="sp-avatar h-9 w-9 text-xs ring-1 ring-ivory/20">{initials(user.name)}</span>
+          <div className="border-t border-border p-3">
+            <div className="flex items-center gap-3 rounded-lg px-2 py-2">
+              <span className="sp-avatar h-9 w-9 text-xs">{initials(user.name)}</span>
               <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-ivory">{user.name}</p>
-                <p className="truncate text-[11px] text-ivory/50">{user.email}</p>
+                <p className="truncate text-sm font-medium text-foreground">{user.name}</p>
+                <p className="truncate text-[11px] text-muted-foreground">{user.email}</p>
               </div>
             </div>
             <button
               type="button"
               onClick={handleSignOut}
-              className="mt-3 inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-ivory/55 transition hover:text-gilded"
+              className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
             >
               <LogOut className="h-3.5 w-3.5" />
               Keluar
@@ -132,11 +139,11 @@ export function DashboardShell({ area, navItems, requiredRole }: Props) {
 
         {/* ---- Main column ---- */}
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-10 border-b border-border bg-background/85 backdrop-blur">
-            <div className="flex items-center justify-between gap-4 px-4 py-4 md:px-8">
+          <header className="sticky top-0 z-10 border-b border-border bg-card/90 backdrop-blur">
+            <div className="flex items-center justify-between gap-4 px-4 py-3.5 md:px-8">
               <div className="min-w-0">
-                <p className="text-[10px] uppercase tracking-[0.32em] text-muted-foreground">{area}</p>
-                <h1 className="truncate font-serif text-xl leading-tight text-foreground md:text-2xl">
+                <p className="text-[11px] leading-tight text-muted-foreground">{area}</p>
+                <h1 className="truncate text-lg font-semibold leading-tight text-foreground md:text-xl">
                   {pageTitle(pathname)}
                 </h1>
               </div>

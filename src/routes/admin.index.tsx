@@ -34,9 +34,13 @@ function AdminDashboard() {
       {/* Stat grid */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
         {stats.map((s) => (
-          <div key={s.label} className="sp-card p-4">
-            <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground">{s.label}</p>
-            <p className={`mt-2 font-serif text-4xl leading-none ${s.accent ? "text-bordeaux" : "text-foreground"}`}>
+          <div key={s.label} className="sp-card sp-card-hover p-4">
+            <p className="text-xs font-medium text-muted-foreground">{s.label}</p>
+            <p
+              className={`mt-1.5 text-3xl font-semibold leading-none tracking-tight tabular-nums ${
+                s.accent ? "text-bordeaux" : "text-foreground"
+              }`}
+            >
               {s.value}
             </p>
           </div>
@@ -47,10 +51,10 @@ function AdminDashboard() {
         {/* Recent projects */}
         <div className="sp-card overflow-hidden lg:col-span-2">
           <div className="flex items-center justify-between border-b border-border px-5 py-4">
-            <h3 className="font-serif text-lg">Proyek Terbaru</h3>
+            <h3 className="text-base font-semibold">Proyek Terbaru</h3>
             <Link
               to="/admin/projects"
-              className="inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.15em] text-muted-foreground transition hover:text-bordeaux"
+              className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition hover:text-bordeaux"
             >
               Lihat semua
               <ArrowUpRight className="h-3.5 w-3.5" />
@@ -86,10 +90,10 @@ function AdminDashboard() {
         {/* WO team */}
         <div className="sp-card overflow-hidden">
           <div className="flex items-center justify-between border-b border-border px-5 py-4">
-            <h3 className="font-serif text-lg">Tim WO</h3>
+            <h3 className="text-base font-semibold">Tim WO</h3>
             <Link
               to="/admin/team"
-              className="inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.15em] text-muted-foreground transition hover:text-bordeaux"
+              className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition hover:text-bordeaux"
             >
               Kelola
               <ArrowUpRight className="h-3.5 w-3.5" />
