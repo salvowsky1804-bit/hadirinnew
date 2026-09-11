@@ -34,9 +34,13 @@ function AdminDashboard() {
       {/* Stat grid */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
         {stats.map((s) => (
-          <div key={s.label} className="sp-card p-4">
-            <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground">{s.label}</p>
-            <p className={`mt-2 font-serif text-4xl leading-none ${s.accent ? "text-bordeaux" : "text-foreground"}`}>
+          <div key={s.label} className="sp-card sp-card-hover p-4">
+            <p className="text-xs font-medium text-muted-foreground">{s.label}</p>
+            <p
+              className={`mt-1.5 text-3xl font-semibold leading-none tracking-tight tabular-nums ${
+                s.accent ? "text-bordeaux" : "text-foreground"
+              }`}
+            >
               {s.value}
             </p>
           </div>
