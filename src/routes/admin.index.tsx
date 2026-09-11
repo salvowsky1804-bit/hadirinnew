@@ -51,10 +51,10 @@ function AdminDashboard() {
         {/* Recent projects */}
         <div className="sp-card overflow-hidden lg:col-span-2">
           <div className="flex items-center justify-between border-b border-border px-5 py-4">
-            <h3 className="font-serif text-lg">Proyek Terbaru</h3>
+            <h3 className="text-base font-semibold">Proyek Terbaru</h3>
             <Link
               to="/admin/projects"
-              className="inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.15em] text-muted-foreground transition hover:text-bordeaux"
+              className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition hover:text-bordeaux"
             >
               Lihat semua
               <ArrowUpRight className="h-3.5 w-3.5" />
