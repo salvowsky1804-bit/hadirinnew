@@ -139,11 +139,11 @@ export function DashboardShell({ area, navItems, requiredRole }: Props) {
 
         {/* ---- Main column ---- */}
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-10 border-b border-border bg-background/85 backdrop-blur">
-            <div className="flex items-center justify-between gap-4 px-4 py-4 md:px-8">
+          <header className="sticky top-0 z-10 border-b border-border bg-card/90 backdrop-blur">
+            <div className="flex items-center justify-between gap-4 px-4 py-3.5 md:px-8">
               <div className="min-w-0">
-                <p className="text-[10px] uppercase tracking-[0.32em] text-muted-foreground">{area}</p>
-                <h1 className="truncate font-serif text-xl leading-tight text-foreground md:text-2xl">
+                <p className="text-[11px] leading-tight text-muted-foreground">{area}</p>
+                <h1 className="truncate text-lg font-semibold leading-tight text-foreground md:text-xl">
                   {pageTitle(pathname)}
                 </h1>
               </div>
