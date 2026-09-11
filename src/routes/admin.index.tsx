@@ -90,10 +90,10 @@ function AdminDashboard() {
         {/* WO team */}
         <div className="sp-card overflow-hidden">
           <div className="flex items-center justify-between border-b border-border px-5 py-4">
-            <h3 className="font-serif text-lg">Tim WO</h3>
+            <h3 className="text-base font-semibold">Tim WO</h3>
             <Link
               to="/admin/team"
-              className="inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.15em] text-muted-foreground transition hover:text-bordeaux"
+              className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition hover:text-bordeaux"
             >
               Kelola
               <ArrowUpRight className="h-3.5 w-3.5" />
