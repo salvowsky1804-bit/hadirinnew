@@ -814,7 +814,9 @@ function Showcase() {
                   <p className={`text-[10px] uppercase tracking-[0.45em] ${c.dark ? "text-gilded" : "text-stone"}`}>
                     {c.tag}
                   </p>
-                  <h3 className={`relative mt-5 font-serif text-5xl italic ${thumbs[c.slug] ? "text-ivory drop-shadow-lg" : c.dark ? "text-ivory" : "text-bordeaux"}`}>
+                  <h3
+                    className={`relative mt-5 font-serif text-5xl italic ${thumbs[c.slug] ? "text-ivory drop-shadow-lg" : c.dark ? "text-ivory" : "text-bordeaux"}`}
+                  >
                     {c.name}
                   </h3>
                   <p
