@@ -9,12 +9,13 @@ import {
   MapPin,
   Heart,
   Image as ImageIcon,
-  Sparkles,
   Quote,
+  Instagram,
+  Facebook,
+  Twitter,
 } from "lucide-react";
 import heroImg from "@/assets/landing-hero.jpg";
 import craftImg from "@/assets/landing-craft.jpg";
-import leafImg from "@/assets/leaf.png";
 import { fetchTemplateThumbnailMap } from "@/lib/template-thumbnails";
 
 const THUMB_CACHE_KEY = "tpl-thumb-map-v1";
@@ -170,55 +171,109 @@ function useParallax(strength = 26) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Small building blocks                                               */
+/* Lovedy building blocks                                              */
 /* ------------------------------------------------------------------ */
 
-function Wave({ fill, className = "" }: { fill: string; className?: string }) {
+/** Botanical sprig — vector version of the branch beneath the wordmark. */
+function Sprig({ className = "", flip = false }: { className?: string; flip?: boolean }) {
+  const leaves = [14, 24, 34, 44, 54, 64, 74, 84, 94];
   return (
-    <div aria-hidden className={`pointer-events-none ${className}`}>
-      <svg viewBox="0 0 1440 90" preserveAspectRatio="none" className="block h-[56px] w-full md:h-[88px]">
-        <path d="M0,52 C320,4 760,96 1080,52 C1248,28 1360,40 1440,36 L1440,90 L0,90 Z" fill={fill} />
-      </svg>
+    <svg
+      viewBox="0 0 108 20"
+      aria-hidden
+      focusable="false"
+      className={className}
+      style={flip ? { transform: "scaleX(-1)" } : undefined}
+    >
+      <path
+        d="M2 13.4C22 11 44 9.4 66 8.6c14-.5 26-.7 40-.6v1.9c-14-.1-26 .1-40 .6-22 .8-44 2.4-64 4.8Z"
+        fill="currentColor"
+      />
+      {leaves.map((x, i) => {
+        const up = i % 2 === 0;
+        const y = up ? 12.4 - x * 0.045 - 3.4 : 12.4 - x * 0.045 + 3.2;
+        return (
+          <ellipse
+            key={x}
+            cx={x}
+            cy={y}
+            rx="5.1"
+            ry="2.5"
+            fill="currentColor"
+            transform={`rotate(${up ? -34 : 30} ${x} ${y})`}
+          />
+        );
+      })}
+    </svg>
+  );
+}
+
+/** Pinyon Script eyebrow — the label that sits above every Lovedy heading. */
+function Eyebrow({ children, tone = "navy" }: { children: ReactNode; tone?: "navy" | "light" }) {
+  return (
+    <p
+      className={`font-script text-[28px] leading-none md:text-[34px] ${
+        tone === "light" ? "text-lv-pale" : "text-lv-navy"
+      }`}
+    >
+      {children}
+    </p>
+  );
+}
+
+function SectionHead({
+  eyebrow,
+  title,
+  align = "center",
+  tone = "navy",
+  className = "",
+}: {
+  eyebrow: string;
+  title: ReactNode;
+  align?: "center" | "left";
+  tone?: "navy" | "light";
+  className?: string;
+}) {
+  return (
+    <div className={`${align === "center" ? "text-center" : "text-left"} ${className}`}>
+      <Reveal>
+        <Eyebrow tone={tone}>{eyebrow}</Eyebrow>
+      </Reveal>
+      <Reveal delay={80}>
+        <h2
+          className={`mt-2 font-display text-[2rem] font-bold leading-[1.18] md:text-[3.5rem] ${
+            tone === "light" ? "text-white" : "text-lv-navy"
+          }`}
+        >
+          {title}
+        </h2>
+      </Reveal>
     </div>
   );
 }
 
-type ChipTone = "ivory" | "cream" | "sage" | "bordeaux" | "gilded";
+type BtnTone = "solid" | "pale" | "outline";
 
-function Chip({
-  icon,
-  label,
-  sub,
-  tone = "ivory",
+function Btn({
+  children,
+  tone = "solid",
   className = "",
-  float = "lp-float",
 }: {
-  icon: ReactNode;
-  label: string;
-  sub?: string;
-  tone?: ChipTone;
+  children: ReactNode;
+  tone?: BtnTone;
   className?: string;
-  float?: string;
 }) {
-  const tones: Record<ChipTone, string> = {
-    ivory: "bg-white/95 text-charcoal ring-charcoal/10",
-    cream: "bg-cream text-charcoal ring-charcoal/10",
-    sage: "bg-sage text-white ring-white/25",
-    bordeaux: "bg-bordeaux text-ivory ring-white/15",
-    gilded: "bg-gilded text-charcoal ring-white/30",
+  const tones: Record<BtnTone, string> = {
+    solid: "bg-lv-peri-deep text-white hover:bg-lv-navy",
+    pale: "bg-lv-pale text-lv-navy hover:bg-white",
+    outline: "border border-lv-peri text-lv-navy hover:border-lv-navy hover:bg-lv-navy hover:text-white",
   };
   return (
-    <div className={`${className} ${float}`}>
-      <div
-        className={`flex items-center gap-2.5 rounded-2xl px-3.5 py-2.5 shadow-xl shadow-charcoal/15 ring-1 backdrop-blur-sm ${tones[tone]}`}
-      >
-        <span className="shrink-0">{icon}</span>
-        <span className="leading-tight">
-          <span className="block text-[11px] font-semibold tracking-wide">{label}</span>
-          {sub ? <span className="block text-[10px] font-normal opacity-75">{sub}</span> : null}
-        </span>
-      </div>
-    </div>
+    <span
+      className={`inline-flex items-center gap-2 px-8 py-3.5 font-display text-[15px] font-bold transition-colors duration-300 ${tones[tone]} ${className}`}
+    >
+      {children}
+    </span>
   );
 }
 
@@ -239,7 +294,7 @@ function Index() {
   }, []);
 
   return (
-    <div className="min-h-dvh bg-ivory font-sans text-charcoal antialiased">
+    <div className="min-h-dvh bg-lv-paper font-body text-lv-ink antialiased">
       <SiteNav />
       <Hero />
       <TrustMarquee />
@@ -264,185 +319,138 @@ function SiteNav() {
     ["Katalog", "/katalog"],
     ["Kontak", "#kontak"],
   ];
+  const socials: [string, ReactNode, string][] = [
+    ["Instagram", <Instagram className="h-4 w-4" key="ig" />, "https://instagram.com"],
+    ["Twitter", <Twitter className="h-4 w-4" key="tw" />, "https://twitter.com"],
+    ["Facebook", <Facebook className="h-4 w-4" key="fb" />, "https://facebook.com"],
+  ];
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        scrolled ? "bg-ivory/85 shadow-[0_1px_0_rgba(43,38,34,0.07)] backdrop-blur-md" : "bg-transparent"
+        scrolled ? "bg-white/92 shadow-[0_1px_0_var(--lv-line)] backdrop-blur-md" : "bg-transparent"
       }`}
     >
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
-        <Link to="/" className="flex items-baseline gap-2">
-          <span className="font-serif text-2xl italic text-bordeaux">Senandika</span>
-          <span className="text-[10px] uppercase tracking-[0.35em] text-stone">Studio</span>
-        </Link>
-        <div className="hidden items-center gap-9 text-xs uppercase tracking-[0.22em] text-stone md:flex">
-          {links.map(([label, href]) => (
-            <a key={href} href={href} className="transition-colors hover:text-bordeaux">
-              {label}
-            </a>
-          ))}
-        </div>
-        <div className="flex items-center gap-3">
-          <Link
-            to="/login"
-            className="hidden rounded-full border border-bordeaux/30 px-5 py-2 text-xs uppercase tracking-[0.22em] text-bordeaux transition hover:bg-bordeaux hover:text-ivory sm:inline-block"
-          >
-            Masuk Studio
+      <div className="mx-auto max-w-7xl px-6 md:px-10">
+        {/* Row 1 — save-the-date · wordmark · socials */}
+        <div className="grid grid-cols-2 items-center gap-4 py-4 md:grid-cols-3">
+          <div className="hidden items-center gap-3 md:flex">
+            <Heart className="h-6 w-6 text-lv-peri" strokeWidth={1.4} />
+            <span className="leading-tight">
+              <span className="block text-[13px] text-lv-ink">Save The Date</span>
+              <span className="block font-display text-[17px] font-bold italic text-lv-navy">14 Desember 2026</span>
+            </span>
+          </div>
+
+          <Link to="/" className="flex flex-col items-start md:items-center">
+            <span className="font-script text-[30px] leading-none text-lv-navy md:text-[34px]">Senandika</span>
+            <Sprig className="mt-1 h-[14px] w-[106px] text-lv-peri" />
           </Link>
-          <a
-            href="#kontak"
-            className="rounded-full bg-bordeaux px-5 py-2 text-xs uppercase tracking-[0.22em] text-ivory shadow-sm transition hover:bg-charcoal"
-          >
-            Konsultasi
-          </a>
+
+          <div className="flex items-center justify-end gap-3">
+            <div className="hidden items-center gap-2 lg:flex">
+              {socials.map(([label, icon, href]) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={label}
+                  className="grid h-10 w-10 place-items-center rounded-full border border-lv-line text-lv-navy transition-colors hover:border-lv-navy hover:bg-lv-navy hover:text-white"
+                >
+                  {icon}
+                </a>
+              ))}
+            </div>
+            <a href="#kontak">
+              <Btn tone="solid" className="px-6 py-2.5 text-[14px]">
+                Konsultasi
+              </Btn>
+            </a>
+          </div>
         </div>
-      </nav>
+
+        {/* Row 2 — hairline + centred Volkhov menu */}
+        <div className="border-t border-lv-line">
+          <nav className="flex items-center justify-center gap-6 overflow-x-auto py-3 md:gap-14">
+            {links.map(([label, href]) => (
+              <a
+                key={href}
+                href={href}
+                className="lv-nav-link shrink-0 font-display text-[16px] text-lv-navy transition-colors hover:text-lv-peri-deep md:text-[19px]"
+              >
+                {label}
+              </a>
+            ))}
+            <Link
+              to="/login"
+              className="lv-nav-link hidden shrink-0 font-display text-[19px] text-lv-muted transition-colors hover:text-lv-navy sm:block"
+            >
+              Masuk Studio
+            </Link>
+          </nav>
+        </div>
+      </div>
     </header>
   );
 }
 
 function Hero() {
   return (
-    <section className="relative isolate overflow-hidden bg-ivory pt-28 md:pt-32">
-      {/* ambient tints + ornament */}
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="lp-breathe absolute -top-24 right-[-10%] h-[460px] w-[460px] rounded-full bg-gilded/15 blur-3xl" />
-        <div className="absolute bottom-10 left-[-12%] h-[380px] w-[380px] rounded-full bg-sage/15 blur-3xl" />
-        <img
-          src={leafImg}
-          alt=""
-          width={420}
-          height={420}
-          className="absolute -left-16 top-28 w-64 -rotate-12 opacity-20"
-        />
+    <section className="relative isolate overflow-hidden">
+      {/* photograph + the design's white veil over a periwinkle tint */}
+      <div aria-hidden className="absolute inset-0 -z-10">
+        <img src={heroImg} alt="" width={1920} height={1200} className="lv-kenburns h-full w-full object-cover" />
+        <div className="lv-band-soft absolute inset-0 opacity-45 mix-blend-multiply" />
+        <div className="lv-veil-light absolute inset-0" />
       </div>
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-6 md:grid-cols-2 md:gap-8 md:px-10">
-        {/* LEFT — copy */}
-        <div className="relative z-10 text-center md:text-left">
-          <p
-            className="lp-rise inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.4em] text-stone"
-            style={{ animationDelay: "0ms" }}
-          >
-            <Sparkles className="h-3.5 w-3.5 text-gilded" /> Studio Undangan Digital · Est. 2024
+      <div className="mx-auto flex min-h-[86vh] max-w-7xl flex-col justify-center px-6 pb-20 pt-52 md:px-10 md:pt-56">
+        <div className="max-w-2xl">
+          <p className="lp-rise font-display text-[20px] text-lv-navy md:text-[28px]" style={{ animationDelay: "0ms" }}>
+            Undangan Pernikahan Digital
           </p>
           <h1
-            className="lp-rise mt-6 font-serif text-[2.75rem] font-light leading-[1.03] text-charcoal md:text-6xl lg:text-[4.4rem]"
+            className="lp-rise mt-3 font-display text-[3rem] leading-[1.02] text-lv-navy md:text-[5rem] lg:text-[6.25rem]"
             style={{ animationDelay: "90ms" }}
           >
-            Undangan digital
-            <br className="hidden md:block" /> yang seindah <em className="italic text-bordeaux">hari bahagia</em> Anda.
+            Senandika
           </h1>
+          <div className="lp-rise mt-6 flex items-center gap-4" style={{ animationDelay: "150ms" }}>
+            <Sprig className="h-[16px] w-[106px] text-lv-peri" />
+            <span className="font-display text-[17px] font-bold italic text-lv-navy">Est. 2024 · Indonesia</span>
+          </div>
           <p
-            className="lp-rise mx-auto mt-6 max-w-md text-base leading-relaxed text-stone md:mx-0 md:text-lg"
-            style={{ animationDelay: "180ms" }}
+            className="lp-rise mt-7 max-w-lg text-[17px] leading-[1.85] text-lv-ink"
+            style={{ animationDelay: "220ms" }}
           >
             Tim kami merangkai setiap detail — sampul, ayat favorit, galeri, hingga RSVP — menjadi undangan hidup yang
             siap Anda bagikan. Anda cukup datang dan bercerita.
           </p>
-          <div
-            className="lp-rise mt-9 flex flex-wrap items-center justify-center gap-3.5 md:justify-start"
-            style={{ animationDelay: "270ms" }}
-          >
-            <a
-              href="#kontak"
-              className="group inline-flex items-center gap-2 rounded-full bg-bordeaux px-7 py-3.5 text-xs uppercase tracking-[0.25em] text-ivory shadow-lg shadow-bordeaux/20 transition hover:bg-charcoal"
-            >
-              Jadwalkan Konsultasi
-              <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+          <div className="lp-rise mt-10 flex flex-wrap items-center gap-4" style={{ animationDelay: "300ms" }}>
+            <a href="#kontak">
+              <Btn tone="solid">
+                Jadwalkan Konsultasi
+                <ArrowRight className="h-4 w-4" />
+              </Btn>
             </a>
-            <Link
-              to="/u/$slug"
-              params={{ slug: "rama-sinta" }}
-              className="group inline-flex items-center gap-2 rounded-full border border-charcoal/20 px-7 py-3.5 text-xs uppercase tracking-[0.25em] text-charcoal transition hover:border-bordeaux hover:text-bordeaux"
-            >
-              Lihat Contoh
-              <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+            <Link to="/u/$slug" params={{ slug: "rama-sinta" }}>
+              <Btn tone="outline">
+                Lihat Contoh
+                <ArrowRight className="h-4 w-4" />
+              </Btn>
             </Link>
           </div>
-          <div
-            className="lp-rise mt-8 flex items-center justify-center gap-3 md:justify-start"
-            style={{ animationDelay: "360ms" }}
-          >
-            <div className="flex -space-x-2">
-              {["#9CA891", "#C2A56B", "#6E2A36"].map((c) => (
-                <span key={c} className="h-7 w-7 rounded-full ring-2 ring-ivory" style={{ background: c }} />
-              ))}
-            </div>
-            <p className="text-xs text-stone">
-              <span className="font-semibold text-charcoal">120+ pasangan</span> telah dirangkai bersama kami
-            </p>
-          </div>
         </div>
 
-        {/* RIGHT — arched photo + drifting chips */}
-        <div className="relative z-10 mx-auto w-full max-w-md">
-          <div className="lp-rise relative" style={{ animationDelay: "200ms" }}>
-            <div className="relative mx-auto aspect-[3/4] w-[78%] overflow-hidden rounded-t-[999px] rounded-b-[2rem] shadow-2xl shadow-bordeaux/20 ring-1 ring-charcoal/10">
-              <img
-                src={heroImg}
-                alt="Pasangan pengantin berpegangan tangan memegang setangkai peony putih"
-                width={900}
-                height={1200}
-                className="h-full w-full object-cover"
-              />
-              <div className="pointer-events-none absolute inset-0 rounded-t-[999px] rounded-b-[2rem] ring-1 ring-inset ring-gilded/30" />
-            </div>
-            <div
-              aria-hidden
-              className="pointer-events-none absolute left-1/2 top-3 -z-10 aspect-[3/4] w-[78%] -translate-x-1/2 rounded-t-[999px] rounded-b-[2rem] border border-gilded/40"
-            />
-
-            <Chip
-              className="absolute -left-3 top-10 md:-left-9"
-              float="lp-float"
-              tone="sage"
-              icon={<Check className="h-4 w-4" strokeWidth={2.5} />}
-              label="RSVP · Hadir"
-              sub="Konfirmasi diterima"
-            />
-            <Chip
-              className="absolute -right-3 top-1/3 md:-right-10"
-              float="lp-float-rev"
-              tone="bordeaux"
-              icon={<Calendar className="h-4 w-4" />}
-              label="12 Hari Lagi"
-              sub="14 · 12 · 2026"
-            />
-            <Chip
-              className="absolute -left-2 bottom-20 md:-left-12"
-              float="lp-float-slow"
-              tone="ivory"
-              icon={
-                <span className="lp-eq text-bordeaux">
-                  <i />
-                  <i />
-                  <i />
-                  <i />
-                </span>
-              }
-              label="Sedang Diputar"
-              sub="Lagu pilihan"
-            />
-            <Chip
-              className="absolute -right-2 bottom-8 md:-right-8"
-              float="lp-float"
-              tone="gilded"
-              icon={<Heart className="h-4 w-4" fill="currentColor" />}
-              label="Rama & Sinta"
-              sub="Save the date"
-            />
-          </div>
+        <div className="mt-16 flex items-center gap-4">
+          <span className="lp-scrollhint text-lv-peri-deep">
+            <ArrowDown className="h-5 w-5" />
+          </span>
+          <span className="text-[13px] text-lv-muted">
+            <span className="font-semibold text-lv-navy">120+ pasangan</span> telah dirangkai bersama kami
+          </span>
         </div>
       </div>
-
-      <div className="relative z-10 mt-12 flex justify-center pb-2">
-        <span className="lp-scrollhint text-stone/70">
-          <ArrowDown className="h-5 w-5" />
-        </span>
-      </div>
-
-      <Wave fill="var(--cream)" className="mt-2" />
     </section>
   );
 }
@@ -459,13 +467,13 @@ function TrustMarquee() {
   ];
   const row = [...items, ...items];
   return (
-    <div className="overflow-hidden border-y border-charcoal/10 bg-cream py-5">
+    <div className="overflow-hidden border-y border-lv-line bg-lv-mist py-5">
       <div className="lp-marquee flex w-max items-center whitespace-nowrap">
         {row.map((label, i) => (
-          <span key={i} className="flex items-center text-[11px] uppercase tracking-[0.35em] text-stone">
+          <span key={i} className="flex items-center font-display text-[15px] italic text-lv-navy">
             <span className="px-7">{label}</span>
-            <span aria-hidden className="text-gilded">
-              ✦
+            <span aria-hidden className="text-lv-peri">
+              ❦
             </span>
           </span>
         ))}
@@ -476,34 +484,29 @@ function TrustMarquee() {
 
 function Philosophy() {
   return (
-    <section id="filosofi" className="relative scroll-mt-28 overflow-hidden bg-ivory pt-24 md:pt-32">
-      <img
-        src={leafImg}
-        alt=""
-        width={420}
-        height={420}
-        loading="lazy"
-        className="pointer-events-none absolute -bottom-10 -right-16 w-72 rotate-180 opacity-20"
-      />
-      <div className="relative mx-auto max-w-3xl px-6 text-center">
-        <Reveal>
-          <p className="text-[11px] uppercase tracking-[0.45em] text-gilded">Filosofi Kami</p>
-        </Reveal>
-        <Reveal delay={80}>
-          <h2 className="mt-6 font-serif text-4xl leading-tight text-charcoal md:text-5xl">
-            Bukan sekadar kartu — <span className="italic text-bordeaux">sebuah pembuka kisah.</span>
-          </h2>
-        </Reveal>
+    <section id="filosofi" className="scroll-mt-40 bg-lv-paper py-24 md:py-32">
+      <div className="mx-auto max-w-3xl px-6">
+        <SectionHead
+          eyebrow="Filosofi"
+          title={
+            <>
+              Bukan sekadar kartu — <em className="font-normal italic">sebuah pembuka kisah.</em>
+            </>
+          }
+        />
         <Reveal delay={160}>
-          <p className="mx-auto mt-7 max-w-xl text-base leading-loose text-stone">
+          <p className="mx-auto mt-8 max-w-xl text-center text-[17px] leading-[1.9] text-lv-ink">
             Kami percaya undangan adalah napas pertama dari sebuah perayaan. Itu sebabnya kami duduk bersama Anda,
             memilih setiap detail, dan mengerjakannya seperti merangkai bunga — sehelai demi sehelai, dengan tenang dan
             teliti.
           </p>
         </Reveal>
+        <Reveal delay={220}>
+          <div className="lv-rule mt-12">
+            <Sprig className="h-[16px] w-[80px] text-lv-peri" />
+          </div>
+        </Reveal>
       </div>
-      <div className="h-20 md:h-28" />
-      <Wave fill="var(--charcoal)" />
     </section>
   );
 }
@@ -532,22 +535,24 @@ function Process() {
     },
   ];
   return (
-    <section id="proses" className="relative scroll-mt-28 bg-charcoal pt-20 text-ivory md:pt-24">
+    <section id="proses" className="lv-band scroll-mt-40 py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="grid gap-12 md:grid-cols-12">
+        <div className="grid gap-14 md:grid-cols-12 md:gap-12">
           <div className="md:col-span-5">
-            <Reveal>
-              <p className="text-[11px] uppercase tracking-[0.45em] text-gilded">Cara Kerja</p>
-            </Reveal>
-            <Reveal delay={80}>
-              <h2 className="mt-6 font-serif text-4xl leading-tight md:text-5xl">
-                Empat langkah,
-                <br />
-                <span className="italic text-gilded">tanpa repot.</span>
-              </h2>
-            </Reveal>
+            <SectionHead
+              align="left"
+              tone="light"
+              eyebrow="Cara Kerja"
+              title={
+                <>
+                  Empat langkah,
+                  <br />
+                  <em className="font-normal italic">tanpa repot.</em>
+                </>
+              }
+            />
             <Reveal delay={160}>
-              <p className="mt-6 max-w-md text-sm leading-loose text-ivory/70">
+              <p className="mt-7 max-w-md text-[17px] leading-[1.9] text-white/85">
                 Anda hanya datang, bercerita, dan menyetujui. Sisanya biar kami. Tidak ada akun yang perlu dibuat, tidak
                 ada formulir yang perlu diisi.
               </p>
@@ -559,20 +564,18 @@ function Process() {
                 as="li"
                 key={s.n}
                 delay={i * 90}
-                className="grid grid-cols-[auto_1fr] gap-x-7 gap-y-2 border-t border-ivory/15 py-7 first:border-t-0 first:pt-0"
+                className="grid grid-cols-[auto_1fr] gap-x-7 gap-y-2 border-t border-white/25 py-7 first:border-t-0 first:pt-0"
               >
-                <span className="font-serif text-3xl italic text-gilded">{s.n}</span>
+                <span className="font-display text-[2rem] font-bold italic text-lv-pale">{s.n}</span>
                 <div>
-                  <h3 className="font-serif text-2xl">{s.title}</h3>
-                  <p className="mt-2.5 text-sm leading-loose text-ivory/70">{s.body}</p>
+                  <h3 className="font-display text-[1.5rem] text-white">{s.title}</h3>
+                  <p className="mt-2.5 text-[16px] leading-[1.85] text-white/85">{s.body}</p>
                 </div>
               </Reveal>
             ))}
           </ol>
         </div>
       </div>
-      <div className="h-20 md:h-28" />
-      <Wave fill="var(--ivory)" />
     </section>
   );
 }
@@ -602,32 +605,33 @@ function LivePreview() {
     },
   ];
   return (
-    <section className="relative overflow-hidden bg-ivory py-24 md:py-32">
+    <section className="overflow-hidden bg-lv-paper py-24 md:py-32">
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-6 md:grid-cols-2 md:gap-20">
         <div>
-          <Reveal>
-            <p className="text-[11px] uppercase tracking-[0.45em] text-gilded">Undangan yang Hidup</p>
-          </Reveal>
-          <Reveal delay={80}>
-            <h2 className="mt-4 font-serif text-4xl leading-tight text-charcoal md:text-5xl">
-              Bukan kartu statis — <span className="italic text-bordeaux">pengalaman yang bergerak.</span>
-            </h2>
-          </Reveal>
+          <SectionHead
+            align="left"
+            eyebrow="Undangan Hidup"
+            title={
+              <>
+                Bukan kartu statis — <em className="font-normal italic">pengalaman yang bergerak.</em>
+              </>
+            }
+          />
           <Reveal delay={160}>
-            <p className="mt-6 max-w-md leading-loose text-stone">
+            <p className="mt-7 max-w-md text-[17px] leading-[1.9] text-lv-ink">
               Setiap undangan kami hidup di tangan tamu: animasi pembuka yang lembut, musik latar, hitung mundur menuju
               hari-H, dan RSVP yang langsung tercatat.
             </p>
           </Reveal>
-          <div className="mt-10 grid gap-x-8 gap-y-7 sm:grid-cols-2">
+          <div className="mt-12 grid gap-x-8 gap-y-8 sm:grid-cols-2">
             {features.map((f, i) => (
-              <Reveal as="div" key={f.title} delay={200 + i * 80} className="flex gap-3.5">
-                <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-bordeaux/10 text-bordeaux">
+              <Reveal as="div" key={f.title} delay={200 + i * 80} className="flex gap-4">
+                <span className="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-lv-pale text-lv-navy">
                   {f.icon}
                 </span>
                 <div>
-                  <h3 className="font-serif text-lg text-charcoal">{f.title}</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-stone">{f.body}</p>
+                  <h3 className="font-display text-[20px] text-lv-navy">{f.title}</h3>
+                  <p className="mt-1.5 text-[15px] leading-[1.8] text-lv-muted">{f.body}</p>
                 </div>
               </Reveal>
             ))}
@@ -639,20 +643,20 @@ function LivePreview() {
           <div ref={ref} style={{ transform: `translateY(${offset}px)` }} className="relative will-change-transform">
             <div
               aria-hidden
-              className="lp-breathe absolute left-1/2 top-1/2 -z-10 h-[115%] w-[115%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gilded/15 blur-3xl"
+              className="lv-band-soft lp-breathe absolute left-1/2 top-1/2 -z-10 h-[112%] w-[112%] -translate-x-1/2 -translate-y-1/2 rounded-[999px] opacity-30 blur-3xl"
             />
-            <div className="relative mx-auto w-[270px] rounded-[2.6rem] border-[10px] border-charcoal bg-charcoal shadow-2xl shadow-charcoal/30">
-              <div className="absolute left-1/2 top-2 z-10 h-1.5 w-16 -translate-x-1/2 rounded-full bg-ivory/30" />
-              <div className="overflow-hidden rounded-[1.9rem] bg-ivory">
-                <div className="relative h-72 bg-gradient-to-b from-bordeaux to-charcoal px-6 pt-12 text-center text-ivory">
-                  <p className="text-[10px] uppercase tracking-[0.4em] text-gilded">The Wedding Of</p>
-                  <p className="mt-5 font-serif text-5xl italic leading-tight">
+            <div className="relative mx-auto w-[270px] rounded-[2.6rem] border-[10px] border-lv-navy bg-lv-navy shadow-2xl shadow-lv-navy/25">
+              <div className="absolute left-1/2 top-2 z-10 h-1.5 w-16 -translate-x-1/2 rounded-full bg-white/30" />
+              <div className="overflow-hidden rounded-[1.9rem] bg-white">
+                <div className="lv-band relative px-6 pb-8 pt-12 text-center text-white">
+                  <p className="font-script text-[24px] leading-none text-lv-pale">The Wedding Of</p>
+                  <p className="mt-4 font-display text-[2.6rem] leading-tight">
                     Rama
-                    <span className="my-1 block text-2xl not-italic text-gilded">&amp;</span>
+                    <span className="my-1 block text-[1.25rem] text-lv-pale">&amp;</span>
                     Sinta
                   </p>
-                  <div className="mx-auto mt-4 h-px w-16 bg-gilded/60" />
-                  <p className="mt-4 text-[11px] uppercase tracking-[0.3em] text-ivory/80">14 · 12 · 2026</p>
+                  <div className="mx-auto mt-4 h-px w-16 bg-white/50" />
+                  <p className="mt-4 font-display text-[13px] font-bold italic">14 · 12 · 2026</p>
                 </div>
                 <div className="grid grid-cols-4 gap-2 px-4 py-5">
                   {[
@@ -661,47 +665,30 @@ function LivePreview() {
                     ["24", "Mnt"],
                     ["11", "Dtk"],
                   ].map(([n, l]) => (
-                    <div key={l} className="rounded-xl bg-cream py-2 text-center">
-                      <div className="font-serif text-xl text-bordeaux">{n}</div>
-                      <div className="text-[8px] uppercase tracking-widest text-stone">{l}</div>
+                    <div key={l} className="rounded-[10px] bg-lv-mist py-2 text-center">
+                      <div className="font-display text-[20px] font-bold text-lv-navy">{n}</div>
+                      <div className="font-display text-[9px] italic text-lv-muted">{l}</div>
                     </div>
                   ))}
                 </div>
-                <div className="mx-4 mb-3 rounded-xl border border-charcoal/10 p-3">
-                  <p className="text-[10px] uppercase tracking-[0.25em] text-stone">Konfirmasi Kehadiran</p>
+                <div className="mx-4 mb-3 border border-lv-line p-3">
+                  <p className="font-display text-[11px] italic text-lv-muted">Konfirmasi Kehadiran</p>
                   <div className="mt-2 flex gap-2">
-                    <span className="flex-1 rounded-lg bg-bordeaux py-1.5 text-center text-[10px] font-semibold text-ivory">
+                    <span className="flex-1 bg-lv-peri-deep py-1.5 text-center font-display text-[11px] font-bold text-white">
                       Hadir
                     </span>
-                    <span className="flex-1 rounded-lg border border-charcoal/15 py-1.5 text-center text-[10px] text-stone">
+                    <span className="flex-1 border border-lv-line py-1.5 text-center font-display text-[11px] text-lv-muted">
                       Berhalangan
                     </span>
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-1.5 px-4 pb-5">
-                  <img src={heroImg} alt="" className="aspect-square w-full rounded-md object-cover" />
-                  <div className="aspect-square rounded-md bg-sage/40" />
-                  <div className="aspect-square rounded-md bg-gilded/40" />
+                  <img src={heroImg} alt="" className="aspect-square w-full object-cover" />
+                  <div className="aspect-square bg-lv-pale" />
+                  <div className="aspect-square bg-lv-lilac" />
                 </div>
               </div>
             </div>
-
-            <Chip
-              className="absolute -left-6 top-16 hidden sm:block"
-              float="lp-float"
-              tone="sage"
-              icon={<Check className="h-4 w-4" strokeWidth={2.5} />}
-              label="RSVP terkirim"
-              sub="Sinta + 1"
-            />
-            <Chip
-              className="absolute -right-6 top-1/2 hidden sm:block"
-              float="lp-float-rev"
-              tone="gilded"
-              icon={<Heart className="h-4 w-4" fill="currentColor" />}
-              label="248 ucapan"
-              sub="Buku tamu"
-            />
           </div>
         </Reveal>
       </div>
@@ -716,7 +703,7 @@ function Showcase() {
       name: "Aksara",
       tag: "Klasik · Minimal",
       desc: "Untuk pasangan yang mencintai keheningan dan ruang putih.",
-      tone: "from-cream to-ivory",
+      tone: "from-lv-mist to-white",
       dark: false,
     },
     {
@@ -724,7 +711,7 @@ function Showcase() {
       name: "Senandika",
       tag: "Modern · Sinematik",
       desc: "Membawa ayat favorit dan video prewedding sebagai pembuka.",
-      tone: "from-bordeaux to-charcoal",
+      tone: "from-lv-peri to-lv-sky",
       dark: true,
     },
     {
@@ -754,32 +741,27 @@ function Showcase() {
   }, [previewSlug]);
   const previewCard = cards.find((c) => c.slug === previewSlug);
   return (
-    <section id="galeri" className="scroll-mt-28 bg-ivory py-24 md:py-32">
+    <section id="galeri" className="scroll-mt-40 bg-lv-mist py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <Reveal>
-              <p className="text-[11px] uppercase tracking-[0.45em] text-gilded">Koleksi Template</p>
-            </Reveal>
-            <Reveal delay={80}>
-              <h2 className="mt-4 max-w-xl font-serif text-4xl leading-tight text-charcoal md:text-5xl">
-                Beberapa karakter, <span className="italic text-bordeaux">tak terhingga cerita.</span>
-              </h2>
-            </Reveal>
-          </div>
-          <Reveal delay={120}>
-            <p className="max-w-xs text-sm text-stone">
-              Setiap template adalah kanvas — siap diberi nyawa oleh kisah Anda. Klik untuk melihat contoh hidup.
-            </p>
-          </Reveal>
-        </div>
-        <Reveal delay={140} className="mt-8">
-          <Link
-            to="/katalog"
-            className="group inline-flex items-center gap-2 rounded-full border border-bordeaux/30 px-5 py-2.5 text-[11px] uppercase tracking-[0.25em] text-bordeaux transition hover:bg-bordeaux hover:text-ivory"
-          >
-            Lihat Seluruh Katalog
-            <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+        <SectionHead
+          eyebrow="Koleksi"
+          title={
+            <>
+              Beberapa karakter, <em className="font-normal italic">tak terhingga cerita.</em>
+            </>
+          }
+        />
+        <Reveal delay={140}>
+          <p className="mx-auto mt-6 max-w-xl text-center text-[17px] leading-[1.9] text-lv-ink">
+            Setiap template adalah kanvas — siap diberi nyawa oleh kisah Anda. Klik untuk melihat contoh hidup.
+          </p>
+        </Reveal>
+        <Reveal delay={180} className="mt-8 text-center">
+          <Link to="/katalog">
+            <Btn tone="pale">
+              Lihat Seluruh Katalog
+              <ArrowRight className="h-4 w-4" />
+            </Btn>
           </Link>
         </Reveal>
         <div className="mt-14 grid gap-7 md:grid-cols-3">
@@ -791,7 +773,7 @@ function Showcase() {
                   setPreviewDevice("desktop");
                   setPreviewSlug(c.slug);
                 }}
-                className="group block w-full overflow-hidden rounded-2xl border border-charcoal/10 text-left transition duration-300 hover:-translate-y-1 hover:border-gilded/50 hover:shadow-2xl hover:shadow-bordeaux/10"
+                className="group block w-full overflow-hidden border border-lv-line bg-white text-left transition duration-300 hover:-translate-y-1 hover:border-lv-peri hover:shadow-[0_28px_60px_-38px_var(--lv-navy)]"
               >
                 <div
                   className={`relative flex aspect-[4/5] flex-col items-center justify-center bg-gradient-to-br ${c.tone} p-10 text-center`}
@@ -807,26 +789,39 @@ function Showcase() {
                       />
                       <div
                         aria-hidden
-                        className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/10"
+                        className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10"
                       />
                     </>
                   )}
-                  <p className={`text-[10px] uppercase tracking-[0.45em] ${c.dark ? "text-gilded" : "text-stone"}`}>
+                  <p
+                    className={`relative font-display text-[14px] italic ${
+                      thumbs[c.slug] || c.dark ? "text-white/90" : "text-lv-muted"
+                    }`}
+                  >
                     {c.tag}
                   </p>
                   <h3
-                    className={`relative mt-5 font-serif text-5xl italic ${thumbs[c.slug] ? "text-ivory drop-shadow-lg" : c.dark ? "text-ivory" : "text-bordeaux"}`}
+                    className={`relative mt-5 font-script text-[3rem] leading-none ${
+                      thumbs[c.slug] || c.dark ? "text-white drop-shadow-md" : "text-lv-navy"
+                    }`}
                   >
                     {c.name}
                   </h3>
+                  <Sprig
+                    className={`relative mt-4 h-[14px] w-[90px] ${
+                      thumbs[c.slug] || c.dark ? "text-white/80" : "text-lv-peri"
+                    }`}
+                  />
                   <p
-                    className={`relative mt-6 max-w-[15rem] text-sm leading-relaxed ${thumbs[c.slug] ? "text-ivory/90 drop-shadow" : c.dark ? "text-ivory/75" : "text-stone"}`}
+                    className={`relative mt-5 max-w-[15rem] text-[15px] leading-[1.8] ${
+                      thumbs[c.slug] || c.dark ? "text-white/90" : "text-lv-muted"
+                    }`}
                   >
                     {c.desc}
                   </p>
                   <span
-                    className={`relative mt-7 inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.3em] ${
-                      thumbs[c.slug] ? "text-gilded" : c.dark ? "text-gilded" : "text-bordeaux"
+                    className={`relative mt-7 inline-flex items-center gap-1.5 font-display text-[14px] font-bold ${
+                      thumbs[c.slug] || c.dark ? "text-white" : "text-lv-navy"
                     }`}
                   >
                     Lihat Contoh
@@ -843,23 +838,23 @@ function Showcase() {
           role="dialog"
           aria-modal="true"
           aria-label={`Pratinjau template ${previewCard.name}`}
-          className="fixed inset-0 z-50 flex flex-col bg-black/70 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex flex-col bg-lv-ink/80 backdrop-blur-sm"
           onClick={(e) => {
             if (e.target === e.currentTarget) setPreviewSlug(null);
           }}
         >
           <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3 text-white">
             <div className="min-w-0">
-              <p className="text-[10px] uppercase tracking-widest text-white/60">Pratinjau Template</p>
-              <h2 className="truncate font-serif text-lg">{previewCard.name}</h2>
+              <p className="font-display text-[12px] italic text-white/70">Pratinjau Template</p>
+              <h2 className="truncate font-display text-[19px]">{previewCard.name}</h2>
             </div>
             <div className="flex items-center gap-2">
-              <div className="inline-flex overflow-hidden rounded-md border border-white/20 text-xs">
+              <div className="inline-flex overflow-hidden border border-white/25 text-[12px]">
                 <button
                   type="button"
                   onClick={() => setPreviewDevice("mobile")}
-                  className={`px-3 py-1.5 uppercase tracking-widest ${
-                    previewDevice === "mobile" ? "bg-white text-black" : "text-white/80 hover:bg-white/10"
+                  className={`px-3 py-1.5 font-display ${
+                    previewDevice === "mobile" ? "bg-white text-lv-navy" : "text-white/85 hover:bg-white/10"
                   }`}
                 >
                   Mobile
@@ -867,8 +862,8 @@ function Showcase() {
                 <button
                   type="button"
                   onClick={() => setPreviewDevice("desktop")}
-                  className={`px-3 py-1.5 uppercase tracking-widest ${
-                    previewDevice === "desktop" ? "bg-white text-black" : "text-white/80 hover:bg-white/10"
+                  className={`px-3 py-1.5 font-display ${
+                    previewDevice === "desktop" ? "bg-white text-lv-navy" : "text-white/85 hover:bg-white/10"
                   }`}
                 >
                   Desktop
@@ -878,7 +873,7 @@ function Showcase() {
                 href={`/preview/${previewCard.slug}`}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-md border border-white/20 px-3 py-1.5 text-xs uppercase tracking-widest text-white hover:bg-white/10"
+                className="border border-white/25 px-3 py-1.5 font-display text-[12px] text-white hover:bg-white/10"
               >
                 Tab baru
               </a>
@@ -886,7 +881,7 @@ function Showcase() {
                 type="button"
                 onClick={() => setPreviewSlug(null)}
                 aria-label="Tutup pratinjau"
-                className="rounded-md border border-white/20 px-3 py-1.5 text-xs uppercase tracking-widest text-white hover:bg-white/10"
+                className="border border-white/25 px-3 py-1.5 font-display text-[12px] text-white hover:bg-white/10"
               >
                 Tutup
               </button>
@@ -894,7 +889,7 @@ function Showcase() {
           </div>
           <div className="flex flex-1 items-center justify-center overflow-auto p-4">
             <div
-              className={`overflow-hidden rounded-lg bg-white shadow-2xl transition-all ${
+              className={`overflow-hidden bg-white shadow-2xl transition-all ${
                 previewDevice === "mobile"
                   ? "h-[min(85vh,820px)] w-[390px] max-w-full"
                   : "h-[min(90vh,900px)] w-full max-w-6xl"
@@ -916,48 +911,51 @@ function Showcase() {
 
 function Craft() {
   const stats: [string, string][] = [
-    ["120+", "Pasangan Dirangkai"],
-    ["100%", "Dikerjakan Tim Kami"],
+    ["120+", "Pasangan"],
+    ["100%", "Tim Kami"],
     ["24 jam", "Pendampingan"],
   ];
   return (
-    <section className="bg-cream py-24 md:py-32">
+    <section className="bg-lv-paper py-24 md:py-32">
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-6 md:grid-cols-2 md:gap-20">
         <Reveal className="relative">
           <img
             src={craftImg}
-            alt="Undangan pernikahan terbuka dengan segel lilin emas di atas kain linen"
+            alt="Undangan pernikahan terbuka dengan segel lilin di atas kain linen"
             width={1280}
             height={960}
             loading="lazy"
-            className="w-full rounded-2xl shadow-2xl shadow-bordeaux/10"
+            className="w-full object-cover shadow-[0_40px_80px_-52px_var(--lv-navy)]"
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute -bottom-4 -right-4 -z-10 h-40 w-40 rounded-2xl bg-gilded/25 blur-2xl"
+            className="lv-band-soft pointer-events-none absolute -bottom-5 -right-5 -z-10 h-44 w-44 opacity-50 blur-2xl"
           />
         </Reveal>
         <div>
-          <Reveal>
-            <p className="text-[11px] uppercase tracking-[0.45em] text-gilded">Karya</p>
-          </Reveal>
-          <Reveal delay={80}>
-            <h2 className="mt-4 font-serif text-4xl leading-tight text-charcoal md:text-5xl">
-              Setiap undangan, <span className="italic text-bordeaux">sebuah pengabdian.</span>
-            </h2>
-          </Reveal>
+          <SectionHead
+            align="left"
+            eyebrow="Karya"
+            title={
+              <>
+                Setiap undangan, <em className="font-normal italic">sebuah pengabdian.</em>
+              </>
+            }
+          />
           <Reveal delay={160}>
-            <p className="mt-6 leading-loose text-stone">
+            <p className="mt-7 text-[17px] leading-[1.9] text-lv-ink">
               Kami memperlakukan undangan Anda seperti surat tulisan tangan — disusun perlahan, diperiksa berulang, dan
               diserahkan dengan kehangatan. Tidak ada yang dititipkan ke mesin semata.
             </p>
           </Reveal>
           <Reveal delay={240}>
-            <dl className="mt-10 grid grid-cols-3 gap-6 border-t border-charcoal/15 pt-9">
+            <dl className="mt-11 grid grid-cols-3 gap-4">
               {stats.map(([v, l]) => (
-                <div key={l}>
-                  <dt className="font-serif text-3xl text-bordeaux md:text-4xl">{v}</dt>
-                  <dd className="mt-2 text-[10px] uppercase tracking-[0.25em] text-stone">{l}</dd>
+                <div key={l} className="lv-count px-3 py-6 text-center">
+                  <dt className="font-display text-[1.75rem] font-bold leading-none text-lv-navy md:text-[2.25rem]">
+                    {v}
+                  </dt>
+                  <dd className="mt-3 font-display text-[14px] italic text-lv-muted">{l}</dd>
                 </div>
               ))}
             </dl>
@@ -970,92 +968,131 @@ function Craft() {
 
 function Testimonial() {
   return (
-    <section className="relative bg-ivory pt-24 md:pt-32">
+    <section className="bg-lv-mist py-24 md:py-32">
       <Reveal as="div" className="mx-auto max-w-3xl px-6 text-center">
-        <Quote className="mx-auto h-10 w-10 text-gilded" />
-        <blockquote className="mt-6 font-serif text-2xl leading-relaxed text-charcoal md:text-3xl">
+        <Quote className="mx-auto h-9 w-9 text-lv-peri" />
+        <blockquote className="mt-7 font-display text-[1.4rem] leading-[1.55] text-lv-navy md:text-[1.85rem]">
           “Kami hanya bertemu, bercerita, lalu undangannya datang lebih indah dari yang kami bayangkan. Tamu kami bahkan
           bertanya siapa yang membuatnya.”
         </blockquote>
-        <figcaption className="mt-9 text-[11px] uppercase tracking-[0.4em] text-stone">
+        <div className="lv-rule mt-9">
+          <Sprig className="h-[14px] w-[70px] text-lv-peri" />
+        </div>
+        <figcaption className="mt-6 font-display text-[17px] font-bold italic text-lv-navy">
           Naya &amp; Arka — Pernikahan Mei 2025
         </figcaption>
       </Reveal>
-      <div className="h-20 md:h-28" />
-      <Wave fill="var(--bordeaux)" />
     </section>
   );
 }
 
 function ClosingCTA() {
+  const contacts: [string, string, string][] = [
+    ["WhatsApp", "+62 812 3456 7890", "https://wa.me/6281234567890"],
+    ["Surel", "halo@senandika.studio", "mailto:halo@senandika.studio"],
+    ["Studio", "Kediri, Jawa Timur", "#kontak"],
+  ];
   return (
-    <section
-      id="kontak"
-      className="relative isolate scroll-mt-28 overflow-hidden bg-bordeaux py-24 text-ivory md:py-32"
-    >
-      <div aria-hidden className="pointer-events-none absolute inset-0 opacity-15">
-        <img
-          src={leafImg}
-          alt=""
-          width={420}
-          height={420}
-          loading="lazy"
-          className="absolute -left-10 top-10 w-72 -rotate-45"
-        />
-        <img
-          src={leafImg}
-          alt=""
-          width={420}
-          height={420}
-          loading="lazy"
-          className="absolute -right-10 bottom-10 w-72 rotate-[200deg]"
-        />
+    <section id="kontak" className="relative isolate scroll-mt-40 overflow-hidden">
+      <div aria-hidden className="absolute inset-0 -z-10">
+        <img src={craftImg} alt="" width={1920} height={1280} loading="lazy" className="h-full w-full object-cover" />
+        <div className="lv-band-soft absolute inset-0 opacity-40 mix-blend-multiply" />
+        <div className="lv-veil-light-soft absolute inset-0" />
       </div>
-      <Reveal as="div" className="relative mx-auto max-w-3xl px-6 text-center">
-        <p className="text-[11px] uppercase tracking-[0.45em] text-gilded">Mulai Perjalanan</p>
-        <h2 className="mt-6 font-serif text-4xl leading-tight md:text-6xl">
-          Mari rangkai undangan
-          <br />
-          <span className="italic text-gilded">yang seindah hari Anda.</span>
-        </h2>
-        <p className="mx-auto mt-7 max-w-lg text-ivory/80">
-          Jadwalkan pertemuan dengan tim kami. Kami sediakan waktu, secangkir teh, dan ruang untuk mendengar cerita
-          Anda.
-        </p>
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-3.5">
-          <a
-            href="https://wa.me/6281234567890"
-            className="group inline-flex items-center gap-2 rounded-full bg-ivory px-8 py-3.5 text-xs uppercase tracking-[0.25em] text-bordeaux transition hover:bg-gilded hover:text-charcoal"
-          >
-            Chat via WhatsApp
-            <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+
+      <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
+        <SectionHead
+          eyebrow="Undangan"
+          align="left"
+          title={
+            <>
+              Mari rangkai undangan
+              <br />
+              <em className="font-normal italic">yang seindah hari Anda.</em>
+            </>
+          }
+          className="max-w-2xl"
+        />
+        <Reveal delay={160}>
+          <p className="mt-7 max-w-lg text-[17px] leading-[1.9] text-lv-ink">
+            Jadwalkan pertemuan dengan tim kami. Kami sediakan waktu, secangkir teh, dan ruang untuk mendengar cerita
+            Anda.
+          </p>
+        </Reveal>
+
+        <Reveal delay={220}>
+          <dl className="mt-12 grid max-w-2xl gap-x-10 gap-y-7 sm:grid-cols-3">
+            {contacts.map(([label, value, href]) => (
+              <div key={label} className="border-b border-lv-peri pb-3">
+                <dt className="text-[13px] text-lv-ink">{label}</dt>
+                <dd className="mt-1.5">
+                  <a
+                    href={href}
+                    className="font-display text-[17px] font-bold italic text-lv-navy underline-offset-4 transition-colors hover:text-lv-peri-deep hover:underline"
+                  >
+                    {value}
+                  </a>
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </Reveal>
+
+        <Reveal delay={280} className="mt-12">
+          <a href="https://wa.me/6281234567890" target="_blank" rel="noreferrer">
+            <Btn tone="solid">
+              Chat via WhatsApp
+              <ArrowRight className="h-4 w-4" />
+            </Btn>
           </a>
-          <a
-            href="mailto:halo@senandika.studio"
-            className="rounded-full border border-ivory/50 px-8 py-3.5 text-xs uppercase tracking-[0.25em] text-ivory transition hover:bg-ivory hover:text-bordeaux"
-          >
-            halo@senandika.studio
-          </a>
-        </div>
-      </Reveal>
+        </Reveal>
+      </div>
     </section>
   );
 }
 
 function Footer() {
+  const socials: [string, ReactNode, string][] = [
+    ["Instagram", <Instagram className="h-4 w-4" key="ig" />, "https://instagram.com"],
+    ["Twitter", <Twitter className="h-4 w-4" key="tw" />, "https://twitter.com"],
+    ["Facebook", <Facebook className="h-4 w-4" key="fb" />, "https://facebook.com"],
+  ];
   return (
-    <footer className="bg-charcoal py-14 text-ivory/70">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 md:flex-row">
-        <div className="flex items-baseline gap-2">
-          <span className="font-serif text-2xl italic text-ivory">Senandika</span>
-          <span className="text-[10px] uppercase tracking-[0.35em] text-ivory/60">Studio</span>
+    <footer className="bg-lv-paper py-16">
+      <div className="mx-auto flex max-w-6xl flex-col items-center gap-7 px-6">
+        <div className="flex flex-col items-center">
+          <span className="font-script text-[34px] leading-none text-lv-navy">Senandika</span>
+          <Sprig className="mt-1.5 h-[16px] w-[110px] text-lv-peri" />
         </div>
-        <p className="text-xs uppercase tracking-[0.3em]">
-          © {new Date().getFullYear()} — Dirangkai dengan kasih di Indonesia
-        </p>
-        <Link to="/login" className="text-xs uppercase tracking-[0.3em] text-ivory/70 transition hover:text-gilded">
-          Masuk Studio
-        </Link>
+
+        <div className="flex items-center gap-3">
+          {socials.map(([label, icon, href]) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={label}
+              className="grid h-10 w-10 place-items-center rounded-full border border-lv-line text-lv-navy transition-colors hover:border-lv-navy hover:bg-lv-navy hover:text-white"
+            >
+              {icon}
+            </a>
+          ))}
+        </div>
+
+        <div className="h-px w-full max-w-3xl bg-lv-line" />
+
+        <div className="flex w-full flex-col items-center gap-3 text-center sm:flex-row sm:justify-between sm:gap-6 sm:text-left">
+          <p className="text-[13px] text-lv-muted">
+            © {new Date().getFullYear()} Senandika Studio — Dirangkai dengan kasih di Indonesia
+          </p>
+          <Link
+            to="/login"
+            className="font-display text-[15px] italic text-lv-navy transition-colors hover:text-lv-peri-deep"
+          >
+            Masuk Studio
+          </Link>
+        </div>
       </div>
     </footer>
   );
