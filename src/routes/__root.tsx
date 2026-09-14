@@ -1,12 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  Outlet,
-  Link,
-  createRootRouteWithContext,
-  useRouter,
-  HeadContent,
-  Scripts,
-} from "@tanstack/react-router";
+import { Outlet, Link, createRootRouteWithContext, useRouter, HeadContent, Scripts } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
@@ -46,9 +39,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
-        </h1>
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">This page didn't load</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Something went wrong on our end. You can try refreshing or head back home.
         </p>
@@ -89,8 +80,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "Hadirin" },
       { name: "twitter:description", content: "Hadirin Wedding Invitation Platform" },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9c100d76-6a9e-4c31-bdbc-fcf040f3f27f/id-preview-69ec64d9--daee7857-04ce-4a9e-8471-b7a22eafe343.lovable.app-1782363595382.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9c100d76-6a9e-4c31-bdbc-fcf040f3f27f/id-preview-69ec64d9--daee7857-04ce-4a9e-8471-b7a22eafe343.lovable.app-1782363595382.png" },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9c100d76-6a9e-4c31-bdbc-fcf040f3f27f/id-preview-69ec64d9--daee7857-04ce-4a9e-8471-b7a22eafe343.lovable.app-1782363595382.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9c100d76-6a9e-4c31-bdbc-fcf040f3f27f/id-preview-69ec64d9--daee7857-04ce-4a9e-8471-b7a22eafe343.lovable.app-1782363595382.png",
+      },
     ],
     links: [
       {
@@ -102,6 +101,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Cormorant:ital,wght@1,400;1,500;1,600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
+      },
+      // Lovedy landing theme: Volkhov (display), Nunito (body),
+      // Pinyon Script (wordmark + eyebrow labels).
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Volkhov:ital,wght@0,400;0,700;1,400;1,700&family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Pinyon+Script&display=swap",
       },
     ],
   }),
