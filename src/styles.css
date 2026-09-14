@@ -68,6 +68,28 @@
   --color-sage: var(--sage);
   --color-charcoal: var(--charcoal);
   --color-stone: var(--stone);
+
+  /* ---- Lovedy landing theme: typefaces ----
+     display = Volkhov (headings), body = Nunito, script = Pinyon Script
+     (eyebrow labels + wordmark). Kept separate from --font-serif /
+     --font-sans so invitation templates and the studio panel are
+     untouched. */
+  --font-display: "Volkhov", "Playfair Display", ui-serif, Georgia, serif;
+  --font-body: "Nunito", ui-sans-serif, system-ui, sans-serif;
+  --font-script: "Pinyon Script", "Cormorant Garamond", ui-serif, cursive;
+
+  /* ---- Lovedy landing theme: palette ---- */
+  --color-lv-navy: var(--lv-navy);
+  --color-lv-ink: var(--lv-ink);
+  --color-lv-sky: var(--lv-sky);
+  --color-lv-peri: var(--lv-peri);
+  --color-lv-peri-deep: var(--lv-peri-deep);
+  --color-lv-pale: var(--lv-pale);
+  --color-lv-lilac: var(--lv-lilac);
+  --color-lv-line: var(--lv-line);
+  --color-lv-muted: var(--lv-muted);
+  --color-lv-mist: var(--lv-mist);
+  --color-lv-paper: var(--lv-paper);
 }
 
 :root {
@@ -83,6 +105,33 @@
   --onyx-soft: oklch(0.26 0.01 60);
   --gold: oklch(0.78 0.1 80);
   --line: oklch(0.55 0.018 65);
+
+  /* ============================================================
+     Lovedy landing palette (from the reference design file).
+     Hex equivalents kept in comments for reference.
+     Contrast notes (WCAG 2.1 AA, verified):
+       navy      on paper  8.41:1   ink on paper 13.05:1
+       muted     on paper  5.22:1   navy on pale  6.73:1
+       peri-deep w/ white  4.94:1  <- button fill (the design's
+                                      #9A9CC2 only reaches 2.66:1,
+                                      so it is ornament-only here)
+       sky / peri / lilac / pale = decoration and large type only.
+     ============================================================ */
+  --lv-navy: oklch(0.421 0.074 253.6); /* #2F4F75 */
+  --lv-ink: oklch(0.314 0.025 294.7); /* #322F3D */
+  --lv-sky: oklch(0.784 0.062 247.1); /* #99BDDF */
+  --lv-peri: oklch(0.704 0.055 282.5); /* #9A9CC2 */
+  --lv-peri-deep: oklch(0.55 0.077 281.8); /* #6A6C9E — AA-safe fill */
+  --lv-pale: oklch(0.923 0.026 231.6); /* #D5E9F4 */
+  --lv-lilac: oklch(0.814 0.041 311.7); /* #CBBBD6 */
+  --lv-line: oklch(0.898 0 0); /* #DDDDDD */
+  --lv-muted: oklch(0.532 0.032 251.7); /* #5F6E7F */
+  --lv-mist: oklch(0.983 0.006 239.8); /* #F6FAFD */
+  --lv-paper: oklch(1 0 0); /* #FFFFFF */
+  /* Darkened twin of the design's #9A9CC2 -> #99BDDF overlay, so white
+     body copy on the gradient band clears 5.4:1 instead of 2.66:1. */
+  --lv-grad-a: oklch(0.487 0.08 280.4); /* #575A8C */
+  --lv-grad-b: oklch(0.522 0.082 245.4); /* #3E6E96 */
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
@@ -471,6 +520,124 @@
   .lp-marquee,
   .lp-scrollhint {
     animation: none !important;
+  }
+}
+
+/* ============================================================
+   Lovedy landing theme — presentation layer
+   -----------------------------------------------------------
+   Everything here is prefixed `lv-` and only used by the marketing
+   landing page. Invitation templates, the login screen and the
+   studio panel keep their own look.
+   ============================================================ */
+@layer utilities {
+  /* Photographic band overlay: the reference design lays a white
+     0.80 -> 0.20 gradient over the hero photo so navy type sits on a
+     light field. */
+  .lv-veil-light {
+    /* Two stacked washes. The horizontal one keeps the copy column at
+       >=0.85 white so navy type stays above 7:1 no matter how dark the
+       photograph behind it is; the vertical one lifts the whole frame. */
+    background-image:
+      linear-gradient(90deg, oklch(1 0 0 / 0.95) 0%, oklch(1 0 0 / 0.85) 48%, oklch(1 0 0 / 0.45) 100%),
+      linear-gradient(180deg, oklch(1 0 0 / 0.42) 0%, oklch(1 0 0 / 0.66) 100%);
+  }
+  .lv-veil-light-soft {
+    background-image:
+      linear-gradient(180deg, oklch(1 0 0 / 0.9) 0%, oklch(1 0 0 / 0.72) 100%),
+      linear-gradient(90deg, oklch(1 0 0 / 0.9) 0%, oklch(1 0 0 / 0.5) 100%);
+  }
+
+  /* The signature periwinkle -> sky band, darkened for AA. */
+  .lv-band {
+    background-image: linear-gradient(120deg, var(--lv-grad-a) 0%, var(--lv-grad-b) 100%);
+  }
+  /* Same hues at full lightness — ornament only, never behind text. */
+  .lv-band-soft {
+    background-image: linear-gradient(120deg, var(--lv-peri) 0%, var(--lv-sky) 100%);
+  }
+
+  /* Menu item with the design's 30x3 rounded sky underline. */
+  .lv-nav-link {
+    position: relative;
+    padding-bottom: 6px;
+  }
+  .lv-nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 30px;
+    border-radius: 1.5px;
+    background: var(--lv-sky);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.28s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .lv-nav-link:hover::after,
+  .lv-nav-link:focus-visible::after,
+  .lv-nav-link[data-active="true"]::after {
+    transform: scaleX(1);
+  }
+
+  /* Count / stat tile: white, 20px radius, per the `ui/Count` symbol. */
+  .lv-count {
+    background: var(--lv-paper);
+    border-radius: 20px;
+    box-shadow: 0 18px 40px -28px oklch(0.42 0.074 253.6 / 0.55);
+  }
+
+  /* Underline-only form field, matching `ui/Field`. */
+  .lv-field {
+    border: 0;
+    border-bottom: 1px solid var(--lv-peri);
+    background: transparent;
+    border-radius: 0;
+  }
+  .lv-field:focus-visible {
+    outline: none;
+    border-bottom-color: var(--lv-navy);
+    box-shadow: 0 1px 0 0 var(--lv-navy);
+  }
+
+  /* Hairline rule with a centred ornament slot. */
+  .lv-rule {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    color: var(--lv-peri);
+  }
+  .lv-rule::before,
+  .lv-rule::after {
+    content: "";
+    height: 1px;
+    width: 64px;
+    background: linear-gradient(to right, transparent, var(--lv-line), transparent);
+  }
+
+  /* Slow horizontal drift for the hero photograph. */
+  .lv-kenburns {
+    animation: lvKenBurns 24s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  @keyframes lvKenBurns {
+    from {
+      transform: scale(1.04) translate3d(0, 0, 0);
+    }
+    to {
+      transform: scale(1.12) translate3d(-1.5%, -1%, 0);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lv-kenburns {
+    animation: none !important;
+  }
+  .lv-nav-link::after {
+    transition: none !important;
   }
 }
 
