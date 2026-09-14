@@ -133,7 +133,7 @@ function AdminProjectsPage() {
                 </tr>
               ) : null}
               {rows.map((p, i) => {
-                const hadir = p.rsvps.filter((r) => r.status === "hadir").length;
+                const hadir = p.rsvps.filter((r) => r.status === "attending").length;
                 const visibleWishes = p.wishes.filter((w) => w.visible !== false).length;
                 const dateLabel = formatDate(p.eventDate);
                 const dLeft = daysUntil(p.eventDate);
