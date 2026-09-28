@@ -107,9 +107,14 @@ function sampleForField(id: string, type: string): unknown {
     return "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu pasangan dari jenismu sendiri…";
   if (id === "preweddingVideoUrl") return "https://youtu.be/dQw4w9WgXcQ";
   if (id === "heroSubtitle") return "The Wedding Of";
+  if (id === "monogram") return "RS";
   if (id === "quote")
     return "Dua jiwa, satu janji — dalam senyap doa, kami menyatu.";
   if (id === "quoteSource") return "— Kalam Sukma";
+  if (id === "storyTitle") return "A Story Written in Time";
+  if (id === "dresscode") return "Black Tie · Champagne · Ivory";
+  if (id === "rundown")
+    return "08.00 — Akad Nikah\n11.00 — Resepsi\n13.30 — Penutup";
   switch (type) {
     case "url":
       return "https://example.com";
