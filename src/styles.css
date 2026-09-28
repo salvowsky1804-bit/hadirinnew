@@ -828,3 +828,48 @@
     transition: none !important;
   }
 }
+
+/* ====== Aurelia royal editorial template ====== */
+.aurelia-theme {
+  --aurelia-ink: oklch(0.16 0.008 70);
+  --aurelia-ink-soft: oklch(0.25 0.01 70);
+  --aurelia-ivory: oklch(0.97 0.012 82);
+  --aurelia-gold: oklch(0.76 0.075 78);
+  --aurelia-champagne: oklch(0.82 0.035 80);
+  --aurelia-taupe: oklch(0.58 0.025 65);
+  letter-spacing: 0;
+}
+
+.aurelia-zoom {
+  animation: aureliaZoom 22s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.aurelia-enter {
+  animation: aureliaEnter 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.aurelia-bob {
+  animation: aureliaBob 2.4s ease-in-out infinite;
+}
+
+@keyframes aureliaZoom {
+  from { transform: scale(1.02); }
+  to { transform: scale(1.11); }
+}
+
+@keyframes aureliaEnter {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes aureliaBob {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50% { transform: translateY(10px); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurelia-zoom,
+  .aurelia-enter,
+  .aurelia-bob { animation: none !important; }
+}
